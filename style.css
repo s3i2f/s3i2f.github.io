@@ -90,7 +90,7 @@
        }
 
        .profile-img {
-           width: min-content;
+           width: fit-content 90%;
            aspect-ratio: 1;
            background: #f1f1f1;
            display: flex;
