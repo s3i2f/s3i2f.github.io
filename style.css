@@ -1,26 +1,38 @@
        @charset "UTF-8";
 
+       /*
+       key color: #669BE1;
+       background: #f1f1f1;
+       title: #0f3566;
+       link: #669be1
+       */
+
        body {
-           font-family: 'Noto sans', ;
-           margin: 20px;
-           background-color: #ffffff;
+           max-width: 760px;
+           font-family: 'Noto Sans JP',
+               'Hiragino Kaku Gothic ProN',
+               sans-serif, ;
+           font-size: 15px;
+           margin: 0 auto;
+           padding: 2rem 1.5rem 4rem;
+           background-color: #f1f1f1;
        }
 
        header,
        footer {
-           background-color: #333;
-           color: white;
+           background-color: #f1f1f1;
+           color: #0f3566;
            padding: 10px;
        }
 
        main {
            padding: 10px;
-           background-color: white;
+           background-color: #f1f1f1;
            border-radius: 5px;
        }
 
        a {
-           color: #007BFF;
+           color: #669be1;
            text-decoration: none;
        }
 
@@ -28,7 +40,70 @@
            text-decoration: underline;
        }
 
+       /*NAVIGATION*/
+       nav ul {
+           display: table;
+           margin: 0 auto;
+           padding: 0;
+           width: 80%;
+           text-align: center;
+       }
 
+       nav li {
+           display: table-cell;
+           min-width: 50px;
+       }
+
+       nav a {
+           display: block;
+           width: 100%;
+           text-decoration: none;
+           color: #555;
+           padding-bottom: 5px;
+       }
+
+       nav li.current {
+           border-bottom: 5px solid #0f3566;
+       }
+
+       nav li.hover {
+           color: #669be1;
+           border-bottom: 5px solid #0f3566;
+       }
+
+       /*INTRO*/
+       .intro {
+           display: flex;
+           gap: 1.5rem;
+           margin-bottom: 1.5rem;
+           padding-bottom: 1.5rem;
+           border-bottom: 1px solid #f1f1f1;
+           align-items: stretch;
+       }
+
+       .profile {
+           width: 200px;
+           flex-shrink: 0;
+           font-size: 12.5px;
+           display: flex;
+           flex-direction: column;
+       }
+
+       .profile-img {
+           width: min-content;
+           aspect-ratio: 1;
+           background: #f1f1f1;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           color: #999;
+           font-size: 12px;
+           border: 1px solid #f1f1f1;
+           margin-bottom: 0.6rem;
+       }
+
+
+       /*ISSHU*/
        .tategaki {
            font-size: large;
            font-family: 'Times New Roman', Times, serif;
