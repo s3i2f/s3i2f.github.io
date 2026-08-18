@@ -40,6 +40,14 @@
            text-decoration: underline;
        }
 
+       /*TITLE*/
+       .title {
+           border-bottom: 2px solid #2a2a2a;
+           padding-bottom: 0.8rem;
+           margin-bottom: 1rem;
+           overflow: hidden;
+       }
+
        /*NAVIGATION*/
        nav ul {
            display: table;
@@ -63,10 +71,12 @@
        }
 
        nav li.current {
+           font-weight: bold;
            border-bottom: 5px solid #0f3566;
        }
 
        nav li.hover {
+           font-weight: bold;
            color: #669be1;
            border-bottom: 5px solid #0f3566;
        }
