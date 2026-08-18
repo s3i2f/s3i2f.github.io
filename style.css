@@ -140,6 +140,11 @@
            text-align: center;
        }
 
+       .footer-nav {
+           display: flex;
+           flex-direction: row;
+       }
+
        .sns-btn {
            justify-content: center;
            align-items: center;
