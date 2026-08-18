@@ -121,16 +121,22 @@
 
        .sns-btn {
            justify-content: center;
+           align-items: center;
            display: flex;
            margin-top: 20px;
        }
 
        .sns-btn li {
            list-style: none;
-           max-width: 30px;
-           height: auto;
+           width: 30px;
            margin-left: 10px;
            margin-right: 10px;
+       }
+
+       .sns-btn ul {
+           display: block;
+           padding: 0;
+           margin: 0;
        }
 
        /*ISSHU*/
