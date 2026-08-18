@@ -24,10 +24,6 @@
            padding: 10px;
        }
 
-       footer {
-           text-align: center;
-       }
-
        main {
            padding: 10px;
            background-color: #f1f1f1;
@@ -118,6 +114,24 @@
            font-size: 15px;
        }
 
+       /*FOOTER*/
+       footer {
+           text-align: center;
+       }
+
+       .sns-btn {
+           justify-content: center;
+           display: flex;
+           margin-top: 20px;
+       }
+
+       .sns-btn li {
+           list-style: none;
+           max-width: 30px;
+           height: auto;
+           margin-left: 10px;
+           margin-right: 10px;
+       }
 
        /*ISSHU*/
        .tategaki {
