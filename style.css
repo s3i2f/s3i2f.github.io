@@ -18,11 +18,14 @@
            background-color: #f1f1f1;
        }
 
-       header,
-       footer {
+       header {
            background-color: #f1f1f1;
            color: #0f3566;
            padding: 10px;
+       }
+
+       footer {
+           text-align: center;
        }
 
        main {
@@ -107,9 +110,12 @@
            align-items: center;
            justify-content: center;
            color: #999;
-           font-size: 12px;
            border: 1px solid #f1f1f1;
            margin-bottom: 0.6rem;
+       }
+
+       .profile-txt {
+           font-size: 15px;
        }
 
 
