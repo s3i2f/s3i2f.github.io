@@ -142,7 +142,7 @@
 
        .footer-nav {
            display: flex;
-           flex-direction: row;
+           flex-direction: column;
        }
 
        .sns-btn {
@@ -167,13 +167,33 @@
        }
 
        /*ISSHU*/
-       .tategaki {
-           font-size: large;
-           font-family: 'Zen Old Mincho', 'Times New Roman', Times, serif;
-           writing-mode: vertical-rl;
+       .isshu-wrap {
+           display: flex;
+           flex-direction: row;
+           align-items: flex-start;
+           margin-top: 20px;
        }
 
-       .textbox {
-           position: absolute;
-           left: 5rem;
+       .isshu {
+           min-width: 130px;
+           writing-mode: vertical-rl;
+           margin-right: 10px;
+       }
+
+       .tanka {
+           height: 33em;
+           font-size: 20px;
+           font-family: 'Zen Old Mincho', 'Times New Roman', Times, serif;
+       }
+
+       .source {
+           text-align: end;
+       }
+
+       .review {
+           flex: 1;
+       }
+
+       .review p {
+           margin-block-start: 0;
        }
