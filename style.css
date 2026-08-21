@@ -1,0 +1,199 @@
+       @charset "UTF-8";
+       @import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700&display=swap');
+
+       /*
+       key color: #669BE1;
+       background: #f1f1f1;
+       title: #0f3566;
+       link: #669be1
+       */
+
+       body {
+           max-width: 760px;
+           font-family: 'Noto Sans JP',
+               'Hiragino Kaku Gothic ProN',
+               sans-serif, ;
+           font-size: 15px;
+           margin: 0 auto;
+           padding: 2rem 1.5rem 4rem;
+           background-color: #f1f1f1;
+       }
+
+       header {
+           background-color: #f1f1f1;
+           color: #0f3566;
+           padding: 10px;
+       }
+
+       main {
+           padding: 10px;
+           background-color: #f1f1f1;
+           border-radius: 5px;
+       }
+
+       h1,
+       h2,
+       h3 {
+           font-family: "Zen Old Mincho", "Times New Roman", serif;
+       }
+
+       a {
+           color: #669be1;
+           text-decoration: none;
+       }
+
+       a:hover {
+           text-decoration: underline;
+       }
+
+       /*TITLE*/
+       .title {
+           border-bottom: 2px solid #2a2a2a;
+           padding-bottom: 0.8rem;
+           margin-bottom: 1rem;
+           overflow: hidden;
+       }
+
+       /*NAVIGATION*/
+       nav ul {
+           display: table;
+           margin: 0 auto;
+           padding: 0;
+           width: 80%;
+           text-align: center;
+       }
+
+       nav li {
+           display: table-cell;
+           min-width: 50px;
+       }
+
+       nav a {
+           display: block;
+           width: 100%;
+           text-decoration: none;
+           color: #555;
+           padding-bottom: 5px;
+       }
+
+       nav li.current {
+           font-weight: bold;
+           border-bottom: 5px solid #0f3566;
+       }
+
+       nav li.hover {
+           font-weight: bold;
+           color: #669be1;
+           border-bottom: 5px solid #0f3566;
+       }
+
+       /*INTRO*/
+       .intro {
+           display: flex;
+           gap: 1.5rem;
+           margin-bottom: 1.5rem;
+           padding-bottom: 1.5rem;
+           border-bottom: 1px solid #f1f1f1;
+           align-items: stretch;
+       }
+
+       .profile {
+           width: auto;
+           flex-shrink: 0;
+           display: flex;
+           flex-direction: row;
+       }
+
+       .profile-img {
+           width: 200px;
+           aspect-ratio: 1;
+           background: #f1f1f1;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           color: #999;
+           border: 1px solid #f1f1f1;
+           margin-bottom: 0.6rem;
+       }
+
+       .profile-txt {
+           padding-inline-start: 1.5rem;
+           font-size: 15px;
+       }
+
+       /*SIDEBAR*/
+       .sidebar {
+           display: flex;
+           position: sticky;
+           top: 20px;
+       }
+
+
+       /*BREADCRUMB*/
+       .breadcrumb {
+           color: #2a2a2a;
+       }
+
+
+       /*FOOTER*/
+       footer {
+           text-align: center;
+       }
+
+       .footer-nav {
+           display: flex;
+           flex-direction: column;
+       }
+
+       .sns-btn {
+           justify-content: center;
+           align-items: center;
+           display: flex;
+           margin-top: 20px;
+           padding-inline-start: 0;
+       }
+
+       .sns-btn li {
+           list-style: none;
+           width: 30px;
+           margin-left: 10px;
+           margin-right: 10px;
+       }
+
+       .sns-btn ul {
+           display: block;
+           padding: 0;
+           margin: 0;
+       }
+
+       /*ISSHU*/
+       .isshu-wrap {
+           display: flex;
+           flex-direction: row;
+           align-items: flex-start;
+           margin-top: 20px;
+       }
+
+       .isshu {
+           min-width: 130px;
+           writing-mode: vertical-rl;
+           margin-right: 10px;
+       }
+
+       .tanka {
+           height: 33em;
+           font-size: 20px;
+           font-family: 'Zen Old Mincho', 'Times New Roman', Times, serif;
+       }
+
+       .source {
+           text-align: end;
+       }
+
+       .review {
+           flex: 1;
+       }
+
+       .review p {
+           margin-block-start: 0;
+       }
