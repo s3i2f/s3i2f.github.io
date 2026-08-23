@@ -166,6 +166,12 @@
            margin: 0;
        }
 
+       /* WORK */
+       .uta {
+           margin-block-start: 40px;
+       }
+
+
        /*ISSHU*/
        .isshu-wrap {
            display: flex;
