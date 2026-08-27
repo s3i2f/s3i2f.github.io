@@ -166,6 +166,13 @@
            margin: 0;
        }
 
+       .sns-btn img {
+           height: auto;
+           width: 30px;
+           object-fit: cover;
+       }
+
+
        /*ISSHU*/
        .isshu-wrap {
            display: flex;
