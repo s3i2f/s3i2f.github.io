@@ -10,6 +10,7 @@
 
        body {
            max-width: 760px;
+           min-height: max-content;
            font-family: 'Noto Sans JP',
                'Hiragino Kaku Gothic ProN',
                sans-serif, ;
