@@ -78,12 +78,13 @@
        }
 
        nav li.current {
-           font-weight: bold;
+           font-weight: normal;
            border-bottom: 5px solid #0f3566;
        }
 
        nav li.hover {
            font-weight: bold;
+           transition: 0.3s;
            color: #669be1;
            border-bottom: 5px solid #0f3566;
        }
