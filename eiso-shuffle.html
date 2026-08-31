@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>歌会詠草集・解題作成ツール</title>
-    <!-- 外部ライブラリ：画面要素をPDFに変換するライブラリ -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         *,
@@ -326,11 +324,9 @@
             writing-mode: vertical-rl;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 
-            /* 2ページ目以降を適切に改ページするための指定 */
             page-break-after: always;
             break-after: page;
             margin-bottom: 20px;
-            /* 画面プレビュー時のページ間の隙間 */
         }
 
         .pdf-header {
@@ -356,7 +352,6 @@
             line-height: 1.8;
             letter-spacing: 1px;
             height: 180mm;
-            /* ヘッダー高さ全体に広げる */
         }
 
         /* 日時・場所のグループ */
@@ -369,15 +364,13 @@
             margin-bottom: 15px;
         }
 
-        /* 司会・参加者のグループ（下揃えにする設定） */
+        /* 司会・参加者のグループ */
         .meta-bottom {
             margin-top: auto;
-            /* 縦書きの行末（紙面の下側）へ押し出す */
             max-height: 130mm;
         }
 
         .meta-bottom div {
-            /* padding-top: em; */
             text-indent: -4.2em;
         }
 
@@ -396,15 +389,8 @@
             letter-spacing: 2px;
             padding-left: 15px;
 
-            /* 短歌の途中での改ページを防止 */
             break-inside: avoid;
             page-break-inside: avoid;
-        }
-
-        .tanka-number {
-            font-size: 9pt;
-            color: #777;
-            margin-bottom: 10px;
         }
 
         .tanka-author {
@@ -422,12 +408,6 @@
             font-size: 0.5em;
             color: #444;
             letter-spacing: 0;
-        }
-
-        #pdf-render-wrapper {
-            position: absolute;
-            left: -9999px;
-            top: -9999px;
         }
     </style>
 </head>
@@ -568,7 +548,7 @@
             <div class="output-option-box">
                 <h3>【詠草集】（無記名）</h3>
                 <div class="btn-group" style="margin-top: 0;">
-                    <button id="download-eiso-btn" class="btn-primary" type="button">PDFをダウンロード</button>
+                    <button id="download-eiso-btn" class="btn-primary" type="button">印刷 / PDF保存</button>
                     <button id="view-eiso-window-btn" class="btn-secondary" type="button">画面に表示（別ウィンドウが開きます）</button>
                 </div>
             </div>
@@ -577,7 +557,7 @@
             <div id="kaidai-option-box" class="output-option-box">
                 <h3>【解題】（作者を表示）</h3>
                 <div class="btn-group" style="margin-top: 0;">
-                    <button id="download-kaidai-btn" class="btn-success" type="button">PDFをダウンロード</button>
+                    <button id="download-kaidai-btn" class="btn-success" type="button">印刷 / PDF保存</button>
                     <button id="view-kaidai-window-btn" class="btn-secondary" type="button">画面に表示（別ウィンドウが開きます）</button>
                 </div>
             </div>
@@ -586,26 +566,6 @@
                 <button id="re-shuffle-btn" class="btn-secondary" type="button">再シャッフル</button>
                 <button id="restart-btn" class="btn-secondary" type="button">最初からやり直す</button>
             </div>
-        </div>
-    </div>
-
-    <!-- PDF生成専用（画面外で描画） -->
-    <div id="pdf-render-wrapper">
-        <div id="pdf-page-content" class="pdf-page">
-            <div class="pdf-header">
-                <h1 class="pdf-title" id="pdf-doc-title">歌会 詠草集</h1>
-                <div class="pdf-meta">
-                    <div class="meta-top">
-                        <div id="print-date">日時：</div>
-                        <div id="print-location">会場：</div>
-                    </div>
-                    <div class="meta-bottom">
-                        <div id="print-mc">司会者：</div>
-                        <div id="print-members">参加者：</div>
-                    </div>
-                </div>
-            </div>
-            <div class="tanka-container" id="tanka-list"></div>
         </div>
     </div>
 
@@ -795,13 +755,26 @@
             const rubyPairs = [];
             const targets = rubyInputArea.querySelectorAll('.ruby-target');
             const texts = rubyInputArea.querySelectorAll('.ruby-text');
+            let hasMissingTarget = false;
+            let missingTargets = [];
+
             targets.forEach((targetInput, idx) => {
                 const target = targetInput.value.trim();
                 const ruby = texts[idx].value.trim();
                 if (target && ruby) {
-                    rubyPairs.push({ target, ruby });
+                    if (!textVal.includes(target)) {
+                        hasMissingTarget = true;
+                        missingTargets.push(target);
+                    } else {
+                        rubyPairs.push({ target, ruby });
+                    }
                 }
             });
+
+            if (hasMissingTarget) {
+                alert(`ルビの対象文字「${missingTargets.join('、')}」が短歌本文に含まれていません。\n確認して再度入力してください。`);
+                return;
+            }
 
             tankaDataList.push({
                 text: textVal,
@@ -840,6 +813,18 @@
         function shuffleData() {
             if (tankaDataList.length === 0) return;
 
+            // 参加者が設定されていない場合は単純ランダムシャッフルを実施
+            if (membersList.length === 0) {
+                let shuffled = [...tankaDataList];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                shuffledTankaList = shuffled;
+                renderEmbeddedPreview();
+                return;
+            }
+
             const originalAuthors = tankaDataList.map((item, idx) => {
                 return item.author || (membersList[idx] || `author_${idx}`);
             });
@@ -853,7 +838,7 @@
                 shuffled = [...tankaDataList];
 
                 for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * i);
+                    const j = Math.floor(Math.random() * (i + 1));
                     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
                 }
 
@@ -880,7 +865,7 @@
             const tankaListDiv = document.getElementById('embed-tanka-list');
             tankaListDiv.innerHTML = '';
 
-            shuffledTankaList.forEach((item, index) => {
+            shuffledTankaList.forEach((item) => {
                 const tankaDiv = document.createElement('div');
                 tankaDiv.className = 'tanka';
 
@@ -893,16 +878,16 @@
         }
 
         // PDFおよび別ウィンドウ表示用の完全なHTMLドキュメントを生成する関数
-        function generatePdfHTML(isKaidai, isForDownload = false) {
+        function generatePdfHTML(isKaidai, autoPrint = false) {
             const displayTitle = eventInfo.title || '歌会';
             const pageTitle = isKaidai ? `${displayTitle} 解題` : `${displayTitle} 詠草集`;
             const generalMembers = membersList.filter(member => member !== eventInfo.mc);
             const membersStr = generalMembers.join(' ') || 'なし';
 
             // 1ページあたりの収容可能数の目安
-            // （ヘッダーがある1ページ目は5首、2ページ目以降は7首で分割）
-            const FIRST_PAGE_LIMIT = 5;
-            const SUBSEQUENT_PAGE_LIMIT = 7;
+            // （ヘッダーがある1ページ目は7首、2ページ目以降は9首で分割）
+            const FIRST_PAGE_LIMIT = 7;
+            const SUBSEQUENT_PAGE_LIMIT = 9;
 
             // 短歌データをページごとに分割する処理
             const pagesTankaData = [];
@@ -917,12 +902,10 @@
 
             // 全ページのHTMLを組み立て
             let pagesHTML = '';
-            let globalIndex = 0; // 通し番号のカウント
 
             pagesTankaData.forEach((pageItems, pageIdx) => {
                 let tankaHTML = '';
                 pageItems.forEach(item => {
-                    globalIndex++;
                     const textWithRuby = buildTankaHTML(item.text, item.rubyPairs);
                     let authorHTML = '';
                     if (isKaidai && item.author) {
@@ -956,7 +939,7 @@
                         </div>
                     `;
                 } else {
-                    // 2ページ目以降のヘッダー（ヘッダーなし、あるいは簡易タイトル）
+                    // 2ページ目以降のヘッダー
                     headerHTML = `
                         <div class="pdf-header" style="border-left: none; padding-left: 0; margin-left: 10px;">
                           <div style="font-size: 10pt; color: #888;">${pageTitle}（${pageIdx + 1}ページ）</div>
@@ -975,10 +958,14 @@
                 `;
             });
 
-            // ダウンロード時は余白・影を削除して原点ズレを防止
-            const bodyStyle = isForDownload
-                ? 'margin: 0; padding: 0; background-color: #fff; display: block;'
-                : 'margin: 0; padding: 40px; background-color: #525659; display: flex; justify-content: center;';
+            // 印刷時の自動呼出スクリプトを追加
+            const printScript = autoPrint ? `<script>
+              window.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                  window.print();
+                }, 300);
+              });
+            <\/script>` : '';
 
             return `<!DOCTYPE html>
 <html lang="ja">
@@ -987,13 +974,31 @@
 <title>${pageTitle}</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
   body {
-    ${bodyStyle}
+    margin: 0;
+    padding: 40px;
+    background-color: #525659;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
   }
-      @media print {
-    body { background-color: #fff; padding: 0; }
-    .pdf-page { box-shadow: none !important; margin-bottom: 0 !important; }
+  @media print {
+    body {
+      background-color: transparent !important;
+      padding: 0 !important;
+      display: block !important;
+    }
+    .pdf-page {
+      box-shadow: none !important;
+      margin-bottom: 0 !important;
+      page-break-after: always !important;
+      break-after: page !important;
+    }
   }
   .pdf-page {
     width: 297mm;
@@ -1002,7 +1007,7 @@
     background-color: #fff;
     color: #2b2b2b;
     box-sizing: border-box;
-    ${isForDownload ? '' : 'box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);'}
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     -webkit-writing-mode: vertical-rl;
     writing-mode: vertical-rl;
     page-break-after: always;
@@ -1029,29 +1034,22 @@
     flex-direction: column;
     line-height: 1.8;
     letter-spacing: 1px;
-    height: 180mm;/* ヘッダー高さ全体に広げる */
+    height: 180mm;
   }
-    /* 日時・場所のグループ */
-        .meta-top {
-            margin-left: 10px;
-            display: inline-flex;
-        }
-
-        .meta-top div {
-            margin-bottom: 15px;
-        }
-
-        /* 司会・参加者のグループ（下揃えにする設定） */
-        .meta-bottom {
-            margin-top: auto;
-            /* 縦書きの行末（紙面の下側）へ押し出す */
-            max-height: 130mm;
-        }
-
-        .meta-bottom div {
-            /* padding-top: em; */
-            text-indent: -4.2em;
-        }
+  .meta-top {
+    margin-left: 10px;
+    display: inline-flex;
+  }
+  .meta-top div {
+    margin-bottom: 15px;
+  }
+  .meta-bottom {
+    margin-top: auto;
+    max-height: 130mm;
+  }
+  .meta-bottom div {
+    text-indent: -4.2em;
+  }
   .tanka-container {
     height: 180mm;
     width: 100%;
@@ -1075,6 +1073,7 @@
   ruby { ruby-align: center; }
   rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
 </style>
+${printScript}
 </head>
 <body>
 ${pagesHTML}
@@ -1082,58 +1081,9 @@ ${pagesHTML}
 </html>`;
         }
 
-        // PDF直接ダウンロード関数（位置ズレ防止・キャプチャ同期処理）
-        function downloadPDF(isKaidai) {
-            const baseName = eventInfo.title || '歌会';
-            const filename = isKaidai ? `${baseName}_解題.pdf` : `${baseName}_詠草集.pdf`;
-            const htmlString = generatePdfHTML(isKaidai, true);
-
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.left = '0';
-            iframe.style.top = '0';
-            iframe.style.width = '297mm';
-            iframe.style.height = '210mm';
-            iframe.style.border = 'none';
-            iframe.style.zIndex = '-9999';
-            iframe.style.opacity = '0';
-            document.body.appendChild(iframe);
-
-            const doc = iframe.contentWindow.document;
-
-            iframe.onload = () => {
-                setTimeout(() => {
-                    const targetElement = doc.querySelector('.pdf-page');
-                    const opt = {
-                        margin: 0,
-                        filename: filename,
-                        image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: {
-                            scale: 2,
-                            useCORS: true,
-                            scrollY: 0,
-                            scrollX: 0
-                        },
-                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-                    };
-
-                    html2pdf().set(opt).from(targetElement).save().then(() => {
-                        document.body.removeChild(iframe);
-                    }).catch(err => {
-                        console.error(err);
-                        document.body.removeChild(iframe);
-                    });
-                }, 400);
-            };
-
-            doc.open();
-            doc.write(htmlString);
-            doc.close();
-        }
-
-        // 新しいウィンドウ（別タブ）で版面を開く機能
-        function openInNewWindow(isKaidai) {
-            const htmlString = generatePdfHTML(isKaidai, false);
+        // 新しいウィンドウ（別タブ）で版面を開く機能 (autoPrint: true で自動的に印刷ダイアログを起動)
+        function openInNewWindow(isKaidai, autoPrint = false) {
+            const htmlString = generatePdfHTML(isKaidai, autoPrint);
             const win = window.open('', '_blank');
             if (!win) {
                 alert('ポップアップがブロックされました。ブラウザのポップアップブロックを解除してください。');
@@ -1175,13 +1125,13 @@ ${pagesHTML}
             updateProgressIndicator(3);
         });
 
-        // 詠草集：ダウンロード＆画面表示ボタン
-        downloadEisoBtn.addEventListener('click', () => downloadPDF(false));
-        viewEisoWindowBtn.addEventListener('click', () => openInNewWindow(false));
+        // 詠草集：印刷/PDF保存＆画面表示ボタン
+        downloadEisoBtn.addEventListener('click', () => openInNewWindow(false, true));
+        viewEisoWindowBtn.addEventListener('click', () => openInNewWindow(false, false));
 
-        // 解題：ダウンロード＆画面表示ボタン
-        downloadKaidaiBtn.addEventListener('click', () => downloadPDF(true));
-        viewKaidaiWindowBtn.addEventListener('click', () => openInNewWindow(true));
+        // 解題：印刷/PDF保存＆画面表示ボタン
+        downloadKaidaiBtn.addEventListener('click', () => openInNewWindow(true, true));
+        viewKaidaiWindowBtn.addEventListener('click', () => openInNewWindow(true, false));
 
         // 再シャッフル
         reShuffleBtn.addEventListener('click', () => {
