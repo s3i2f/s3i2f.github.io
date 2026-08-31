@@ -75,7 +75,7 @@
         }
 
         .step-progress-item:not(:last-child)::after {
-            content: "＞";
+            content: ">>";
             position: absolute;
             right: -10px;
             top: 50%;
@@ -278,7 +278,6 @@
             margin-top: 20px;
             padding: 20px;
             background-color: #525659;
-            /* デバッグ用背景色に合わせたビジュアル */
             border-radius: 6px;
             overflow-x: auto;
             display: flex;
@@ -859,160 +858,185 @@
             });
         }
 
-        // PDF生成用DOM（非表示）への更新
-        function preparePdfDOM(isKaidai) {
-            const displayTitle = eventInfo.title;
-            document.getElementById('pdf-doc-title').textContent = isKaidai ? `${displayTitle} 解題` : `${displayTitle} 詠草集`;
-            document.getElementById('print-date').textContent = '日時：' + (eventInfo.date || '未設定');
-            document.getElementById('print-location').textContent = '場所：' + (eventInfo.location || '未設定');
-            document.getElementById('print-mc').textContent = '司会者：' + (eventInfo.mc || '未設定');
-
+        // PDFおよび別ウィンドウ表示用の完全なHTMLドキュメントを生成する関数
+        function generatePdfHTML(isKaidai) {
+            const displayTitle = eventInfo.title || '歌会';
+            const pageTitle = isKaidai ? `${displayTitle} 解題` : `${displayTitle} 詠草集`;
             const generalMembers = membersList.filter(member => member !== eventInfo.mc);
-            document.getElementById('print-members').textContent = '参加者：' + (generalMembers.join(' ') || 'なし');
+            const membersStr = generalMembers.join(' ') || 'なし';
 
-            const tankaListDiv = document.getElementById('tanka-list');
-            tankaListDiv.innerHTML = '';
-
+            let tankaHTML = '';
             shuffledTankaList.forEach((item, index) => {
-                const tankaDiv = document.createElement('div');
-                tankaDiv.className = 'tanka';
-
-                // const numDiv = document.createElement('div');
-                // numDiv.className = 'tanka-number';
-                // numDiv.textContent = `【第${index + 1}首】`;
-                // tankaDiv.appendChild(numDiv);
-
-                const textSpan = document.createElement('span');
-                textSpan.innerHTML = buildTankaHTML(item.text, item.rubyPairs);
-                tankaDiv.appendChild(textSpan);
-
+                const textWithRuby = buildTankaHTML(item.text, item.rubyPairs);
+                let authorHTML = '';
                 if (isKaidai && item.author) {
-                    const authorDiv = document.createElement('div');
-                    authorDiv.className = 'tanka-author';
-                    authorDiv.textContent = item.author;
-                    tankaDiv.appendChild(authorDiv);
+                    authorHTML = `<div class="tanka-author">${item.author}</div>`;
                 }
 
-                tankaListDiv.appendChild(tankaDiv);
+                tankaHTML += `
+                    <div class="tanka">
+                        <span>${textWithRuby}</span>
+                        ${authorHTML}
+                    </div>
+                `;
             });
+
+            // ダウンロード時は背景グレー・外側余白を排除（位置ズレ防止）
+            const bodyStyle = isForDownload
+                ? 'margin: 0; padding: 0; background-color: #fff; display: block;'
+                : 'margin: 0; padding: 40px; background-color: #525659; display: flex; justify-content: center;';
+
+            return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>${pageTitle}</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    ${bodyStyle}
+    font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
+  }
+  .pdf-page {
+    width: 297mm;
+    height: 210mm;
+    padding: 15mm;
+    background-color: #fff;
+    color: #2b2b2b;
+    box-sizing: border-box;
+    ${isForDownload ? '' : 'box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);'}
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+  }
+  .pdf-header {
+    border-left: 2px solid #669BE1;
+    padding-left: 15px;
+    margin-left: 25px;
+    height: 180mm;
+  }
+  .pdf-title {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #3b74c4;
+    margin: 0 0 0 10pt;
+    letter-spacing: 2px;
+  }
+  .pdf-meta {
+    font-size: 9pt;
+    color: #444;
+    display: flex;
+    line-height: 1.8;
+    letter-spacing: 1px;
+  }
+  .pdf-meta div {
+    margin-left: 10px;
+    margin-bottom: 30px;
+  }
+  .tanka-container {
+    height: 180mm;
+    width: 100%;
+    padding-top: 5mm;
+    margin-right: 50px;
+  }
+  .tanka {
+    margin-left: 30px;
+    margin-right: 5px;
+    font-size: 13pt;
+    line-height: 2.2;
+    letter-spacing: 2px;
+    padding-left: 15px;
+  }
+  .tanka-author {
+    font-size: 10pt;
+    color: #333;
+    margin-top: 20px;
+    text-align: right;
+  }
+  ruby { ruby-align: center; }
+  rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
+</style>
+</head>
+<body>
+  <div class="pdf-page">
+    <div class="pdf-header">
+      <h1 class="pdf-title">${pageTitle}</h1>
+      <div class="pdf-meta">
+        <div>日時：${eventInfo.date || '未設定'}</div>
+        <div>場所：${eventInfo.location || '未設定'}</div>
+        <div>司会者：${eventInfo.mc || '未設定'}</div>
+        <div>参加者：${membersStr}</div>
+      </div>
+    </div>
+    <div class="tanka-container">
+      ${tankaHTML}
+    </div>
+  </div>
+</body>
+</html>`;
         }
 
-        // PDF直接ダウンロード関数
+        // PDF直接ダウンロード関数（レンダリング同期処理）
         function downloadPDF(isKaidai) {
-            preparePdfDOM(isKaidai);
-
             const baseName = eventInfo.title || '歌会';
             const filename = isKaidai ? `${baseName}_解題.pdf` : `${baseName}_詠草集.pdf`;
+            // 第二引数に true を渡して余白なしのクリーンなHTMLを出力させる
+            const htmlString = generatePdfHTML(isKaidai, true);
 
-            const element = document.getElementById('pdf-page-content');
-            const opt = {
-                margin: 0,
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            // 一時的にキャプチャ用 iframe を作成
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.left = '0';
+            iframe.style.top = '0';
+            iframe.style.width = '297mm';
+            iframe.style.height = '210mm';
+            iframe.style.border = 'none';
+            iframe.style.zIndex = '-9999';
+            iframe.style.opacity = '0';
+            document.body.appendChild(iframe);
+
+            const doc = iframe.contentWindow.document;
+
+            // iframe 内のHTMLロード完了後にPDFキャプチャを実行
+            iframe.onload = () => {
+                setTimeout(() => {
+                    const targetElement = doc.querySelector('.pdf-page');
+                    const opt = {
+                        margin: 0,
+                        filename: filename,
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: {
+                            scale: 2,
+                            useCORS: true,
+                            scrollY: 0, // スクロールオフセットによる位置ズレを強制リセット
+                            scrollX: 0
+                        },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                    };
+
+                    html2pdf().set(opt).from(targetElement).save().then(() => {
+                        document.body.removeChild(iframe);
+                    }).catch(err => {
+                        console.error(err);
+                        document.body.removeChild(iframe);
+                    });
+                }, 400); // 描画・レイアウト確定を待つウェイト
             };
 
-            html2pdf().set(opt).from(element).save();
+            doc.open();
+            doc.write(htmlString);
+            doc.close();
         }
 
         // 新しいウィンドウ（別タブ）で版面を開く機能
         function openInNewWindow(isKaidai) {
-            preparePdfDOM(isKaidai);
-            const content = document.getElementById('pdf-page-content').outerHTML;
-            const pageTitle = isKaidai ? `${eventInfo.title}_解題` : `${eventInfo.title}_詠草集`;
-
+            const htmlString = generatePdfHTML(isKaidai);
             const win = window.open('', '_blank');
             if (!win) {
                 alert('ポップアップがブロックされました。ブラウザのポップアップブロックを解除してください。');
                 return;
             }
-
-            win.document.write(`
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>${pageTitle}</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      background-color: #525659;
-      margin: 0;
-      padding: 40px;
-      display: flex;
-      justify-content: center;
-      font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
-    }
-    .pdf-page {
-      width: 297mm;
-      height: 210mm;
-      padding: 15mm;
-      background-color: #fff;
-      color: #2b2b2b;
-      box-sizing: border-box;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      -webkit-writing-mode: vertical-rl;
-      writing-mode: vertical-rl;
-    }
-    .pdf-header {
-      border-left: 2px solid #669BE1;
-      padding-left: 15px;
-      margin-left: 25px;
-      height: 100%;
-    }
-    .pdf-title {
-      font-size: 18pt;
-      font-weight: bold;
-      color: #3b74c4;
-      margin: 0 0 0 10pt;
-      letter-spacing: 2px;
-    }
-    .pdf-meta {
-      font-size: 9pt;
-      color: #444;
-      display: flex;
-      line-height: 1.8;
-      letter-spacing: 1px;
-    }
-    .pdf-meta div {
-      margin-left: 10px;
-      margin-bottom: 30px;
-    }
-    .tanka-container {
-      height: 100%;
-      width: 100%;
-      padding-top: 5mm;
-      margin-right: 50px;
-    }
-    .tanka {
-      margin-left: 30px;
-      margin-right: 5px;
-      font-size: 13pt;
-      line-height: 2.2;
-      letter-spacing: 2px;
-      padding-left: 15px;
-    }
-    .tanka-number {
-      font-size: 9pt;
-      color: #777;
-      margin-bottom: 10px;
-    }
-    .tanka-author {
-      font-size: 10pt;
-      color: #333;
-      margin-top: 20px;
-      text-align: right;
-    }
-    ruby { ruby-align: center; }
-    rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
-  </style>
-</head>
-<body>
-  ${content}
-</body>
-</html>
-            `);
+            win.document.open();
+            win.document.write(htmlString);
             win.document.close();
         }
 
