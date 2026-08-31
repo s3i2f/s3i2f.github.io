@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
     <title>短歌詠草集・解題作成ツール</title>
     <!-- 外部ライブラリ：画面要素をPDFに変換するライブラリ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -19,33 +18,94 @@
 
         body {
             font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
-            background-color: #faf8f5;
+            background-color: #f4f7fb;
             color: #2b2b2b;
             margin: 0;
             padding: 0;
         }
 
+        /* --- 固定ヘッダー & アプリ全体フレーム --- */
+        .app-header {
+            background-color: #ffffff;
+            border-bottom: 2px solid #669BE1;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(102, 155, 225, 0.1);
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            color: #3b74c4;
+            letter-spacing: 1px;
+        }
+
+        .app-header p {
+            margin: 6px 0 0 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* --- ステップ進捗インジケーター --- */
+        .step-progress-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e8f5;
+            position: relative;
+        }
+
+        .step-progress-item {
+            flex: 1;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #a0aec0;
+            padding: 8px 4px;
+            border-bottom: 3px solid #cbd5e0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .step-progress-item.active {
+            color: #3b74c4;
+            border-bottom-color: #669BE1;
+        }
+
+        .step-progress-item:not(:last-child)::after {
+            content: "＞";
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #cbd5e0;
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+
         /* --- 画面表示用スタイリング --- */
         .screen-container {
-            max-width: 650px;
-            margin: 40px auto;
+            max-width: 800px;
+            margin: 30px auto 50px auto;
             padding: 30px;
             background: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e8e2d9;
+            box-shadow: 0 4px 15px rgba(102, 155, 225, 0.08);
+            border: 1px solid #dce6f5;
         }
 
         h2 {
-            color: #5c1d24;
-            border-bottom: 2px solid #5c1d24;
+            color: #3b74c4;
+            border-bottom: 2px solid #669BE1;
             padding-bottom: 8px;
             margin-top: 0;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
         }
 
         .step-desc {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #666;
             margin-bottom: 20px;
             line-height: 1.5;
@@ -60,26 +120,26 @@
             font-weight: bold;
             margin-bottom: 6px;
             font-size: 0.9rem;
-            color: #444;
+            color: #334155;
         }
 
         .input-field {
             width: 100%;
             padding: 10px 12px;
             font-size: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid #cbd5e0;
             border-radius: 4px;
-            background-color: #fcfbf9;
+            background-color: #f8fafc;
             font-family: inherit;
         }
 
         .input-field:focus {
             outline: none;
-            border-color: #5c1d24;
+            border-color: #669BE1;
             background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(102, 155, 225, 0.2);
         }
 
-        /* 司会者のラジオボタン */
         .mc-label {
             font-size: 0.85rem;
             white-space: nowrap;
@@ -90,7 +150,6 @@
             color: #555;
         }
 
-        /* 参加者動的リスト用 */
         .member-item {
             display: flex;
             align-items: center;
@@ -98,15 +157,14 @@
             margin-bottom: 8px;
         }
 
-        /* 作者選択用ラジオボタン群 */
         .author-radio-group {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             padding: 12px;
-            background-color: #f7f5f0;
+            background-color: #f0f5fc;
             border-radius: 4px;
-            border: 1px solid #e2ddd5;
+            border: 1px solid #d0e0f7;
             margin-bottom: 12px;
         }
 
@@ -118,40 +176,90 @@
             gap: 4px;
         }
 
+        .ruby-toggle-btn {
+            background: none;
+            border: none;
+            color: #3b74c4;
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 4px 0;
+            text-decoration: underline;
+            margin-top: 6px;
+            display: inline-block;
+        }
+
+        .ruby-toggle-btn:hover {
+            color: #2a528a;
+        }
+
+        .ruby-area {
+            margin-top: 8px;
+            padding: 10px 12px;
+            background-color: #f0f5fc;
+            border: 1px solid #d0e0f7;
+            border-radius: 4px;
+        }
+
+        .ruby-pair-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .ruby-pair-item input {
+            padding: 6px 8px;
+            font-size: 13px;
+        }
+
         .btn-group {
-            margin-top: 25px;
+            margin-top: 20px;
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 10px 18px;
             font-size: 14px;
             cursor: pointer;
             border: none;
             border-radius: 4px;
             font-family: inherit;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
-            background-color: #5c1d24;
+            background-color: #669BE1;
             color: #fff;
+            font-weight: bold;
         }
 
         .btn-primary:hover {
-            background-color: #7a2730;
+            background-color: #5086cb;
+        }
+
+        .btn-success {
+            background-color: #48bb78;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .btn-success:hover {
+            background-color: #38a169;
         }
 
         .btn-secondary {
-            background-color: #e0dcd5;
-            color: #333;
-            margin-top: 8px;
+            background-color: #e2e8f0;
+            color: #4a5568;
         }
 
         .btn-secondary:hover {
-            background-color: #d0cac0;
+            background-color: #cbd5e0;
         }
 
         .btn-small {
@@ -165,15 +273,45 @@
             margin-top: 8px;
         }
 
-        .hidden {
-            display: none !important;
+        /* 埋め込みプレビュー用コンテナ */
+        .preview-embedded-wrapper {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #525659;
+            /* デバッグ用背景色に合わせたビジュアル */
+            border-radius: 6px;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
         }
 
-        /* --- PDF生成用の非表示ラッパー（画面外に配置） --- */
-        #pdf-render-wrapper {
-            position: absolute;
-            left: -9999px;
-            top: -9999px;
+        .preview-section-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #3b74c4;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #669BE1;
+            padding-bottom: 4px;
+        }
+
+        .output-option-box {
+            background-color: #f8fafc;
+            border: 1px solid #dce6f5;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .output-option-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 1rem;
+            color: #334155;
+        }
+
+        .hidden {
+            display: none !important;
         }
 
         /* --- PDFレイアウト（A4横置き: 297mm x 210mm） --- */
@@ -187,11 +325,13 @@
             box-sizing: border-box;
             -webkit-writing-mode: vertical-rl;
             writing-mode: vertical-rl;
-            /* text-orientation: upright; */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            /* 画面埋め込み時の紙面影 */
+            flex-shrink: 0;
         }
 
         .pdf-header {
-            border-left: 2px solid #5c1d24;
+            border-left: 2px solid #669BE1;
             padding-left: 15px;
             margin-left: 25px;
             height: 100%;
@@ -200,9 +340,8 @@
         .pdf-title {
             font-size: 18pt;
             font-weight: bold;
-            color: #5c1d24;
+            color: #3b74c4;
             margin: 0 0 0 10pt;
-            /* 縦書き用の余白 */
             letter-spacing: 2px;
         }
 
@@ -216,18 +355,14 @@
 
         .pdf-meta div {
             margin-left: 10px;
-            /* 縦書き時の行間調整 */
             margin-bottom: 30px;
-            /*変更中*/
         }
 
-        /* 短歌一覧（縦書きレイアウト） */
         .tanka-container {
             height: 100%;
             width: 100%;
             padding-top: 5mm;
             margin-right: 50px;
-            /*変更中*/
         }
 
         .tanka {
@@ -239,109 +374,190 @@
             padding-left: 15px;
         }
 
+        .tanka-number {
+            font-size: 9pt;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
         .tanka-author {
             font-size: 10pt;
             color: #333;
             margin-top: 20px;
             text-align: right;
         }
+
+        ruby {
+            ruby-align: center;
+        }
+
+        rt {
+            font-size: 0.5em;
+            color: #444;
+            letter-spacing: 0;
+        }
+
+        #pdf-render-wrapper {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- STEP 1: 歌会情報の入力 -->
-    <div id="step-1" class="screen-container">
-        <h2>1. 歌会情報の入力</h2>
-        <p class="step-desc">歌会の情報を入力してください（空欄でも構いません）。</p>
+    <header class="app-header">
+        <h1>短歌詠草集・解題作成ツール</h1>
+        <p>短歌を1首ずつブラインド入力し、シャッフルされた縦書きPDF（詠草集・解題）を作成します</p>
+    </header>
 
-        <div class="input-group">
-            <label for="event-title">歌会タイトル</label>
-            <input type="text" id="event-title" class="input-field" placeholder="例: 定例歌会（未入力の場合は「歌会」となります）">
+    <div class="screen-container">
+        <!-- 進捗表示インジケーター -->
+        <div class="step-progress-bar">
+            <div id="progress-step-1" class="step-progress-item active">1. 歌会情報・参加者</div>
+            <div id="progress-step-2" class="step-progress-item">2. 詠草入力</div>
+            <div id="progress-step-3" class="step-progress-item">3. 結果・ダウンロード</div>
         </div>
 
-        <div class="input-group">
-            <label for="event-date">日時</label>
-            <input type="text" id="event-date" class="input-field" placeholder="例: 1920/8/7">
+        <!-- STEP 1 -->
+        <div id="step-1">
+            <h2>Step 1. 歌会情報の入力</h2>
+            <p class="step-desc">歌会の情報を入力してください（空欄でも構いません）。</p>
+
+            <div class="input-group">
+                <label for="event-title">歌会タイトル</label>
+                <input type="text" id="event-title" class="input-field" placeholder="例: 定例歌会（未入力の場合は「歌会」となります）">
+            </div>
+
+            <div class="input-group">
+                <label for="event-date">日時</label>
+                <input type="text" id="event-date" class="input-field" placeholder="例: 1920/8/7">
+            </div>
+
+            <div class="input-group">
+                <label for="event-location">場所</label>
+                <input type="text" id="event-location" class="input-field" placeholder="例: サークル室A">
+            </div>
+
+            <div class="input-group">
+                <label>参加者と司会者の選択</label>
+                <div id="member-list-container">
+                    <div style="margin-bottom: 8px; font-size: 0.85rem; color: #666;">
+                        <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                            <input type="radio" name="mc-choice" value="" checked> （司会者なし / 選択しない）
+                        </label>
+                    </div>
+
+                    <div class="member-item">
+                        <input type="text" class="input-field member-input" placeholder="参加者名 1">
+                        <label class="mc-label">
+                            <input type="radio" name="mc-choice" value="0"> 司会
+                        </label>
+                    </div>
+                </div>
+                <button id="add-member-btn" class="btn-secondary btn-small" type="button">+ 参加者を追加</button>
+            </div>
+
+            <div class="btn-group">
+                <button id="to-step-2-btn" class="btn-primary" type="button">次へ（歌を入力）</button>
+            </div>
         </div>
 
-        <div class="input-group">
-            <label for="event-location">場所</label>
-            <input type="text" id="event-location" class="input-field" placeholder="例: サークル室A">
-        </div>
+        <!-- STEP 2 -->
+        <div id="step-2" class="hidden">
+            <h2>Step 2. 短歌と作者の入力</h2>
+            <p class="step-desc">作者を選択し、短歌を入力後「次の歌を入力」を押してください。<br>※一度登録された作者は選択肢から自動で除外されます。</p>
 
-        <div class="input-group">
-            <label>参加者と司会者の選択</label>
-            <div id="member-list-container">
-                <!-- 司会者未選択用のラジオボタン -->
-                <div style="margin-bottom: 8px; font-size: 0.85rem; color: #666;">
-                    <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                        <input type="radio" name="mc-choice" value="" checked> （司会者なし / 選択しない）
-                    </label>
+            <div class="input-group">
+                <label>作者</label>
+                <div id="author-radio-container" class="author-radio-group"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="tanka-input">短歌</label>
+                <input type="text" id="tanka-input" class="input-field" placeholder="短歌を入力..." autofocus>
+
+                <div>
+                    <button type="button" id="toggle-ruby-btn" class="ruby-toggle-btn">＋ ルビ（ふりがな）を追加する</button>
                 </div>
 
-                <!-- 参加者入力行 1 -->
-                <div class="member-item">
-                    <input type="text" class="input-field member-input" placeholder="参加者名 1">
-                    <label class="mc-label">
-                        <input type="radio" name="mc-choice" value="0"> 司会
-                    </label>
+                <div id="ruby-input-area" class="ruby-area hidden">
+                    <div style="font-size: 0.8rem; color: #555; margin-bottom: 6px;">対象の文字とルビを入力してください</div>
+                    <div id="ruby-pairs-container">
+                        <div class="ruby-pair-item">
+                            <input type="text" class="input-field ruby-target" placeholder="対象の文字 (例: 街)"
+                                style="width: 45%;">
+                            <input type="text" class="input-field ruby-text" placeholder="ルビ (例: まち)"
+                                style="width: 45%;">
+                        </div>
+                    </div>
+                    <button type="button" id="add-ruby-pair-btn" class="btn-secondary btn-small"
+                        style="margin-top: 4px;">+ ルビ枠を追加</button>
+                </div>
+
+                <div class="count-info">現在の入力数: <span id="tanka-count">0</span> 首</div>
+            </div>
+
+            <div class="btn-group">
+                <button id="next-tanka-btn" class="btn-success" type="button">次の歌を入力</button>
+                <button id="finish-btn" class="btn-primary" type="button">完了（シャッフルする）</button>
+                <button id="back-to-step1-btn" class="btn-secondary" type="button">歌会情報を変更</button>
+                <button id="reset-btn" class="btn-secondary" type="button">リセット</button>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div id="step-3" class="hidden">
+            <h2>Step 3. 結果プレビュー・出力オプション</h2>
+            <p class="step-desc">短歌の順序がシャッフルされました。<br>画面上でプレビューを確認し、各種出力オプションを選択できます。</p>
+
+            <!-- 1. Body領域内に埋め込まれた詠草集（作者なし）版面 -->
+            <div class="preview-section-title">■ 詠草集（作者非表示）の出来上がりイメージ</div>
+            <div class="preview-embedded-wrapper">
+                <div id="embedded-eiso-page" class="pdf-page">
+                    <div class="pdf-header">
+                        <h1 class="pdf-title" id="embed-title">歌会 詠草集</h1>
+                        <div class="pdf-meta">
+                            <div id="embed-date">日時：</div>
+                            <div id="embed-location">場所：</div>
+                            <div id="embed-mc">司会者：</div>
+                            <div id="embed-members">参加者：</div>
+                        </div>
+                    </div>
+                    <div class="tanka-container" id="embed-tanka-list"></div>
                 </div>
             </div>
-            <button id="add-member-btn" class="btn-secondary btn-small" style="margin-top: 8px;">+ 参加者を追加</button>
-        </div>
 
-        <div class="btn-group">
-            <button id="to-step-2-btn" class="btn-primary">次へ（歌を入力）</button>
-        </div>
-    </div>
+            <!-- 2. 下部出力オプション -->
+            <div class="preview-section-title">■ 出力オプション</div>
 
-    <!-- STEP 2: 短歌の入力 -->
-    <div id="step-2" class="screen-container hidden">
-        <h2>2. 短歌と作者の入力</h2>
-        <p class="step-desc">作者を選択し、短歌を入力後「次の歌を入力」を押してください。<br>※一度登録された作者は選択肢から自動で除外されます。</p>
+            <!-- 詠草集（作者なし）オプション -->
+            <div class="output-option-box">
+                <h3>【詠草集】（作者非表示バージョン）</h3>
+                <div class="btn-group" style="margin-top: 0;">
+                    <button id="download-eiso-btn" class="btn-primary" type="button">PDFをダウンロード</button>
+                    <button id="view-eiso-window-btn" class="btn-secondary" type="button">画面（別ウィンドウ）に表示</button>
+                </div>
+            </div>
 
-        <div class="input-group">
-            <label>作者</label>
-            <div id="author-radio-container" class="author-radio-group">
-                <!-- ラジオボタンが動的に生成されます -->
+            <!-- 解題（作者あり）オプション（※参加者入力時のみ表示） -->
+            <div id="kaidai-option-box" class="output-option-box">
+                <h3>【解題】（作者表示バージョン）</h3>
+                <div class="btn-group" style="margin-top: 0;">
+                    <button id="download-kaidai-btn" class="btn-success" type="button">PDFをダウンロード</button>
+                    <button id="view-kaidai-window-btn" class="btn-secondary" type="button">画面（別ウィンドウ）に表示</button>
+                </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 25px;">
+                <button id="re-shuffle-btn" class="btn-secondary" type="button">再シャッフル</button>
+                <button id="restart-btn" class="btn-secondary" type="button">最初からやり直す</button>
             </div>
         </div>
-
-        <div class="input-group">
-            <label for="tanka-input">短歌</label>
-            <input type="text" id="tanka-input" class="input-field" placeholder="短歌を入力..." autofocus>
-            <div class="count-info">現在の入力数: <span id="tanka-count">0</span> 首</div>
-        </div>
-
-        <div class="btn-group">
-            <button id="next-tanka-btn" class="btn-primary" style="background-color: #2b5c1d;">次の歌を入力</button>
-            <button id="finish-btn" class="btn-primary">完了（シャッフルする）</button>
-            <button id="back-to-step1-btn" class="btn-secondary">歌会情報を変更</button>
-            <button id="reset-btn" class="btn-secondary">リセット</button>
-        </div>
     </div>
 
-    <!-- STEP 3: 出力画面 -->
-    <div id="step-3" class="screen-container hidden">
-        <h2>3. 詠草集・解題のPDFダウンロード</h2>
-
-        <p class="step-desc">短歌の順序がシャッフルされました。<br>PDFファイルをダウンロードできます。</p>
-
-        <div class="btn-group">
-            <button id="download-eiso-btn" class="btn-primary">詠草集PDF（作者非表示）をダウンロード</button>
-            <button id="download-kaidai-btn" class="btn-primary"
-                style="background-color: #2b5c1d;">解題PDF（作者表示）をダウンロード</button>
-        </div>
-
-        <div class="btn-group">
-            <button id="re-shuffle-btn" class="btn-secondary">再シャッフル</button>
-            <button id="restart-btn" class="btn-secondary">最初からやり直す</button>
-        </div>
-    </div>
-
-
-    <!-- PDFレンダリング用領域（画面外で生成） -->
+    <!-- PDF生成専用（画面外で描画用） -->
     <div id="pdf-render-wrapper">
         <div id="pdf-page-content" class="pdf-page">
             <div class="pdf-header">
@@ -353,24 +569,25 @@
                     <div id="print-members">参加者：</div>
                 </div>
             </div>
-            <!-- 短歌一覧 -->
             <div class="tanka-container" id="tanka-list"></div>
         </div>
     </div>
 
 
     <script>
-        // データ保持変数
-        const tankaDataList = []; // { text: "", author: "" }
+        const tankaDataList = [];
         let membersList = [];
-        let remainingAuthors = []; // まだ選択されていない作者のリスト
-        let eventInfo = { title: '', date: '', location: '' };
+        let remainingAuthors = [];
+        let eventInfo = { title: '', date: '', location: '', mc: '' };
         let shuffledTankaList = [];
 
-        // 要素取得
         const step1 = document.getElementById('step-1');
         const step2 = document.getElementById('step-2');
         const step3 = document.getElementById('step-3');
+
+        const progressStep1 = document.getElementById('progress-step-1');
+        const progressStep2 = document.getElementById('progress-step-2');
+        const progressStep3 = document.getElementById('progress-step-3');
 
         const eventTitleInput = document.getElementById('event-title');
         const eventDateInput = document.getElementById('event-date');
@@ -382,6 +599,11 @@
         const tankaInput = document.getElementById('tanka-input');
         const tankaCount = document.getElementById('tanka-count');
 
+        const toggleRubyBtn = document.getElementById('toggle-ruby-btn');
+        const rubyInputArea = document.getElementById('ruby-input-area');
+        const rubyPairsContainer = document.getElementById('ruby-pairs-container');
+        const addRubyPairBtn = document.getElementById('add-ruby-pair-btn');
+
         const toStep2Btn = document.getElementById('to-step-2-btn');
         const backToStep1Btn = document.getElementById('back-to-step1-btn');
         const nextTankaBtn = document.getElementById('next-tanka-btn');
@@ -389,11 +611,24 @@
         const resetBtn = document.getElementById('reset-btn');
 
         const downloadEisoBtn = document.getElementById('download-eiso-btn');
+        const viewEisoWindowBtn = document.getElementById('view-eiso-window-btn');
         const downloadKaidaiBtn = document.getElementById('download-kaidai-btn');
+        const viewKaidaiWindowBtn = document.getElementById('view-kaidai-window-btn');
+        const kaidaiOptionBox = document.getElementById('kaidai-option-box');
+
         const reShuffleBtn = document.getElementById('re-shuffle-btn');
         const restartBtn = document.getElementById('restart-btn');
 
-        // 「+ 参加者を追加」ボタンの処理
+        function updateProgressIndicator(activeStep) {
+            progressStep1.classList.remove('active');
+            progressStep2.classList.remove('active');
+            progressStep3.classList.remove('active');
+
+            if (activeStep === 1) progressStep1.classList.add('active');
+            if (activeStep === 2) progressStep2.classList.add('active');
+            if (activeStep === 3) progressStep3.classList.add('active');
+        }
+
         addMemberBtn.addEventListener('click', () => {
             const index = memberListContainer.querySelectorAll('.member-item').length;
             const div = document.createElement('div');
@@ -407,7 +642,38 @@
             memberListContainer.appendChild(div);
         });
 
-        // STEP 1 -> STEP 2 (作者ラジオボタンの再描画処理)
+        toggleRubyBtn.addEventListener('click', () => {
+            rubyInputArea.classList.toggle('hidden');
+            if (!rubyInputArea.classList.contains('hidden')) {
+                toggleRubyBtn.textContent = '－ ルビ（ふりがな）欄を閉じる';
+            } else {
+                toggleRubyBtn.textContent = '＋ ルビ（ふりがな）を追加する';
+            }
+        });
+
+        addRubyPairBtn.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.className = 'ruby-pair-item';
+            div.innerHTML = `
+        <input type="text" class="input-field ruby-target" placeholder="対象の文字" style="width: 45%;">
+        <input type="text" class="input-field ruby-text" placeholder="ルビ" style="width: 45%;">
+      `;
+            rubyPairsContainer.appendChild(div);
+        });
+
+        function buildTankaHTML(text, rubyPairs) {
+            let htmlText = text;
+            if (rubyPairs && rubyPairs.length > 0) {
+                rubyPairs.forEach(pair => {
+                    if (pair.target && pair.ruby) {
+                        const rubyHTML = `<ruby>${pair.target}<rt>${pair.ruby}</rt></ruby>`;
+                        htmlText = htmlText.split(pair.target).join(rubyHTML);
+                    }
+                });
+            }
+            return htmlText;
+        }
+
         function renderAuthorRadioButtons() {
             authorRadioContainer.innerHTML = '';
             if (remainingAuthors.length === 0) {
@@ -426,13 +692,11 @@
             }
         }
 
-        // STEP 1 -> STEP 2 への遷移
         toStep2Btn.addEventListener('click', () => {
             eventInfo.title = eventTitleInput.value.trim() || '歌会';
             eventInfo.date = eventDateInput.value.trim();
             eventInfo.location = eventLocationInput.value.trim();
 
-            // 参加者と司会者の取得
             const inputs = document.querySelectorAll('.member-input');
             const selectedMcRadio = document.querySelector('input[name="mc-choice"]:checked');
             const mcIndex = selectedMcRadio ? selectedMcRadio.value : "";
@@ -444,19 +708,15 @@
                 const val = input.value.trim();
                 if (val) {
                     membersList.push(val);
-                    // 選択されたラジオボタンのインデックスと一致すれば司会者として保持
                     if (mcIndex !== "" && parseInt(mcIndex, 10) === idx) {
                         mcName = val;
                     }
                 }
             });
 
-            eventInfo.mc = mcName; // 司会者を保存
-
-            // 選択可能な作者リストの初期化（未選択のものをコピー）
+            eventInfo.mc = mcName;
             remainingAuthors = [...membersList];
 
-            // すでに登録された短歌がある場合の作者除外処理（戻った場合などのケア）
             tankaDataList.forEach(item => {
                 if (item.author) {
                     remainingAuthors = remainingAuthors.filter(a => a !== item.author);
@@ -467,23 +727,22 @@
 
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
+            updateProgressIndicator(2);
             tankaInput.focus();
         });
 
-        // STEP 2 -> STEP 1
         backToStep1Btn.addEventListener('click', () => {
             step2.classList.add('hidden');
             step1.classList.remove('hidden');
+            updateProgressIndicator(1);
         });
 
-        // 短歌入力欄でのEnterキー無効化（誤操作防止）
         tankaInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
             }
         });
 
-        // 「次の歌を入力」ボタンを押したときの登録処理
         nextTankaBtn.addEventListener('click', () => {
             const textVal = tankaInput.value.trim();
             if (!textVal) {
@@ -497,43 +756,121 @@
                 selectedAuthor = checkedRadio.value;
             }
 
-            // 短歌データを保存
-            tankaDataList.push({
-                text: textVal,
-                author: selectedAuthor
+            const rubyPairs = [];
+            const targets = rubyInputArea.querySelectorAll('.ruby-target');
+            const texts = rubyInputArea.querySelectorAll('.ruby-text');
+            targets.forEach((targetInput, idx) => {
+                const target = targetInput.value.trim();
+                const ruby = texts[idx].value.trim();
+                if (target && ruby) {
+                    rubyPairs.push({ target, ruby });
+                }
             });
 
-            // 選択された作者を選択肢から除外
+            tankaDataList.push({
+                text: textVal,
+                author: selectedAuthor,
+                rubyPairs: rubyPairs
+            });
+
             if (selectedAuthor) {
                 remainingAuthors = remainingAuthors.filter(author => author !== selectedAuthor);
             }
 
-            // フォームとラジオボタンを更新
             tankaInput.value = '';
+            rubyPairsContainer.innerHTML = `
+        <div class="ruby-pair-item">
+          <input type="text" class="input-field ruby-target" placeholder="対象の文字 (例: 街)" style="width: 45%;">
+          <input type="text" class="input-field ruby-text" placeholder="ルビ (例: まち)" style="width: 45%;">
+        </div>
+      `;
+            rubyInputArea.classList.add('hidden');
+            toggleRubyBtn.textContent = '＋ ルビ（ふりがな）を追加する';
+
             tankaCount.textContent = tankaDataList.length;
             renderAuthorRadioButtons();
             tankaInput.focus();
         });
 
-        // シャッフル処理
-        function shuffleData() {
-            shuffledTankaList = [...tankaDataList];
-            for (let i = shuffledTankaList.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffledTankaList[i], shuffledTankaList[j]] = [shuffledTankaList[j], shuffledTankaList[i]];
+        function isValidDerangement(originalAuthors, shuffledItems) {
+            for (let i = 0; i < originalAuthors.length; i++) {
+                if (shuffledItems[i] && shuffledItems[i].author && shuffledItems[i].author === originalAuthors[i]) {
+                    return false;
+                }
             }
+            return true;
         }
 
-        // PDF用のHTMLをDOMに反映
+        function shuffleData() {
+            if (tankaDataList.length === 0) return;
+
+            const originalAuthors = tankaDataList.map((item, idx) => {
+                return item.author || (membersList[idx] || `author_${idx}`);
+            });
+
+            let shuffled = [];
+            let isSuccess = false;
+            let attempts = 0;
+
+            while (!isSuccess && attempts < 1000) {
+                attempts++;
+                shuffled = [...tankaDataList];
+
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * i);
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+
+                if (isValidDerangement(originalAuthors, shuffled)) {
+                    isSuccess = true;
+                }
+            }
+
+            shuffledTankaList = shuffled;
+            renderEmbeddedPreview();
+        }
+
+        // STEP 3 内の Body 領域に直接埋め込む「詠草集（作者なし）」プレビュー描画
+        function renderEmbeddedPreview() {
+            const displayTitle = eventInfo.title;
+            document.getElementById('embed-title').textContent = `${displayTitle} 詠草集`;
+            document.getElementById('embed-date').textContent = '日時：' + (eventInfo.date || '未設定');
+            document.getElementById('embed-location').textContent = '場所：' + (eventInfo.location || '未設定');
+            document.getElementById('embed-mc').textContent = '司会者：' + (eventInfo.mc || '未設定');
+
+            const generalMembers = membersList.filter(member => member !== eventInfo.mc);
+            document.getElementById('embed-members').textContent = '参加者：' + (generalMembers.join(' ') || 'なし');
+
+            const tankaListDiv = document.getElementById('embed-tanka-list');
+            tankaListDiv.innerHTML = '';
+
+            shuffledTankaList.forEach((item, index) => {
+                const tankaDiv = document.createElement('div');
+                tankaDiv.className = 'tanka';
+
+                const numDiv = document.createElement('div');
+                numDiv.className = 'tanka-number';
+                numDiv.textContent = `【第${index + 1}首】`;
+                tankaDiv.appendChild(numDiv);
+
+                const textSpan = document.createElement('span');
+                textSpan.innerHTML = buildTankaHTML(item.text, item.rubyPairs);
+                tankaDiv.appendChild(textSpan);
+
+                tankaListDiv.appendChild(tankaDiv);
+            });
+        }
+
+        // PDF生成用DOM（非表示）への更新
         function preparePdfDOM(isKaidai) {
             const displayTitle = eventInfo.title;
-            document.getElementById('pdf-doc-title').textContent = isKaidai ? `${displayTitle} 解題` : `${displayTitle}`;
+            document.getElementById('pdf-doc-title').textContent = isKaidai ? `${displayTitle} 解題` : `${displayTitle} 詠草集`;
             document.getElementById('print-date').textContent = '日時：' + (eventInfo.date || '未設定');
             document.getElementById('print-location').textContent = '場所：' + (eventInfo.location || '未設定');
             document.getElementById('print-mc').textContent = '司会者：' + (eventInfo.mc || '未設定');
-            // 参加者一覧から司会者と一致する名前を除外
+
             const generalMembers = membersList.filter(member => member !== eventInfo.mc);
-            document.getElementById('print-members').textContent = '参加者：' + (generalMembers.join('　') || 'なし');
+            document.getElementById('print-members').textContent = '参加者：' + (generalMembers.join(' ') || 'なし');
 
             const tankaListDiv = document.getElementById('tanka-list');
             tankaListDiv.innerHTML = '';
@@ -542,10 +879,15 @@
                 const tankaDiv = document.createElement('div');
                 tankaDiv.className = 'tanka';
 
-                // 短歌本文
-                tankaDiv.appendChild(document.createTextNode(item.text));
+                const numDiv = document.createElement('div');
+                numDiv.className = 'tanka-number';
+                numDiv.textContent = `【第${index + 1}首】`;
+                tankaDiv.appendChild(numDiv);
 
-                // 解題（作者表示オプション）の場合
+                const textSpan = document.createElement('span');
+                textSpan.innerHTML = buildTankaHTML(item.text, item.rubyPairs);
+                tankaDiv.appendChild(textSpan);
+
                 if (isKaidai && item.author) {
                     const authorDiv = document.createElement('div');
                     authorDiv.className = 'tanka-author';
@@ -557,11 +899,10 @@
             });
         }
 
-        // 直接PDFをダウンロードする処理 (html2pdfを使用)
+        // PDF直接ダウンロード関数
         function downloadPDF(isKaidai) {
             preparePdfDOM(isKaidai);
 
-            // ファイル名の生成
             const baseName = eventInfo.title || '歌会';
             const filename = isKaidai ? `${baseName}_解題.pdf` : `${baseName}_詠草集.pdf`;
 
@@ -571,20 +912,116 @@
                 filename: filename,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
-                // 横置き（Landscape）設定
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
             };
 
             html2pdf().set(opt).from(element).save();
         }
 
-        // 完了ボタンを押した時 (STEP 2 -> STEP 3)
+        // 新しいウィンドウ（別タブ）で版面を開く機能（デバッグファイル風）
+        function openInNewWindow(isKaidai) {
+            preparePdfDOM(isKaidai);
+            const content = document.getElementById('pdf-page-content').outerHTML;
+            const pageTitle = isKaidai ? `${eventInfo.title}_解題画面` : `${eventInfo.title}_詠草集画面`;
+
+            const win = window.open('', '_blank');
+            if (!win) {
+                alert('ポップアップがブロックされました。ブラウザのポップアップブロックを解除してください。');
+                return;
+            }
+
+            win.document.write(`
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>${pageTitle}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      background-color: #525659;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
+    }
+    .pdf-page {
+      width: 297mm;
+      height: 210mm;
+      padding: 15mm;
+      background-color: #fff;
+      color: #2b2b2b;
+      box-sizing: border-box;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      -webkit-writing-mode: vertical-rl;
+      writing-mode: vertical-rl;
+    }
+    .pdf-header {
+      border-left: 2px solid #669BE1;
+      padding-left: 15px;
+      margin-left: 25px;
+      height: 100%;
+    }
+    .pdf-title {
+      font-size: 18pt;
+      font-weight: bold;
+      color: #3b74c4;
+      margin: 0 0 0 10pt;
+      letter-spacing: 2px;
+    }
+    .pdf-meta {
+      font-size: 9pt;
+      color: #444;
+      display: flex;
+      line-height: 1.8;
+      letter-spacing: 1px;
+    }
+    .pdf-meta div {
+      margin-left: 10px;
+      margin-bottom: 30px;
+    }
+    .tanka-container {
+      height: 100%;
+      width: 100%;
+      padding-top: 5mm;
+      margin-right: 50px;
+    }
+    .tanka {
+      margin-left: 30px;
+      margin-right: 5px;
+      font-size: 13pt;
+      line-height: 2.2;
+      letter-spacing: 2px;
+      padding-left: 15px;
+    }
+    .tanka-number {
+      font-size: 9pt;
+      color: #777;
+      margin-bottom: 10px;
+    }
+    .tanka-author {
+      font-size: 10pt;
+      color: #333;
+      margin-top: 20px;
+      text-align: right;
+    }
+    ruby { ruby-align: center; }
+    rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
+  </style>
+</head>
+<body>
+  ${content}
+</body>
+</html>
+            `);
+            win.document.close();
+        }
+
+        // STEP 2 -> STEP 3
         finishBtn.addEventListener('click', () => {
-            // 入力欄に未追加のテキストが残っている場合
             if (tankaInput.value.trim() !== '') {
-                if (confirm('入力欄に未保存の短歌があります。「次の歌を入力」を押さずに完了へ進みますか？')) {
-                    // 保存せずに進む
-                } else {
+                if (!confirm('入力欄に未保存の短歌があります。「次の歌を入力」を押さずに完了へ進みますか？')) {
                     return;
                 }
             }
@@ -593,20 +1030,33 @@
                 alert('短歌が入力されていません。');
                 return;
             }
+
+            if (membersList.length > 0 && tankaDataList.length < membersList.length) {
+                if (!confirm('全員分の短歌が入力されていません。完了しますか？')) {
+                    return;
+                }
+            }
+
+            // 参加者が1人も登録されていない場合、解題のオプションボックスを丸ごと非表示化
+            if (membersList.length === 0) {
+                kaidaiOptionBox.classList.add('hidden');
+            } else {
+                kaidaiOptionBox.classList.remove('hidden');
+            }
+
             shuffleData();
             step2.classList.add('hidden');
             step3.classList.remove('hidden');
+            updateProgressIndicator(3);
         });
 
-        // 詠草集PDFダウンロード
-        downloadEisoBtn.addEventListener('click', () => {
-            downloadPDF(false);
-        });
+        // 詠草集：ダウンロード＆画面表示ボタン
+        downloadEisoBtn.addEventListener('click', () => downloadPDF(false));
+        viewEisoWindowBtn.addEventListener('click', () => openInNewWindow(false));
 
-        // 解題PDFダウンロード
-        downloadKaidaiBtn.addEventListener('click', () => {
-            downloadPDF(true);
-        });
+        // 解題：ダウンロード＆画面表示ボタン
+        downloadKaidaiBtn.addEventListener('click', () => downloadPDF(true));
+        viewKaidaiWindowBtn.addEventListener('click', () => openInNewWindow(true));
 
         // 再シャッフル
         reShuffleBtn.addEventListener('click', () => {
@@ -614,7 +1064,7 @@
             alert('短歌を再シャッフルしました。');
         });
 
-        // リセットボタン（入力中の短歌クリア）
+        // リセット
         resetBtn.addEventListener('click', () => {
             if (confirm('入力済みの短歌をリセットしますか？')) {
                 tankaDataList.length = 0;
@@ -637,10 +1087,23 @@
                 eventDateInput.value = '';
                 eventLocationInput.value = '';
                 tankaInput.value = '';
-                memberListContainer.innerHTML = '<div class="member-item"><input type="text" class="input-field member-input" placeholder="参加者名 1"></div>';
+                memberListContainer.innerHTML = `
+          <div style="margin-bottom: 8px; font-size: 0.85rem; color: #666;">
+            <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+              <input type="radio" name="mc-choice" value="" checked> （司会者なし / 選択しない）
+            </label>
+          </div>
+          <div class="member-item">
+            <input type="text" class="input-field member-input" placeholder="参加者名 1">
+            <label class="mc-label">
+              <input type="radio" name="mc-choice" value="0"> 司会
+            </label>
+          </div>
+        `;
 
                 step3.classList.add('hidden');
                 step1.classList.remove('hidden');
+                updateProgressIndicator(1);
             }
         });
     </script>
