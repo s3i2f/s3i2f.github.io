@@ -325,6 +325,12 @@
             -webkit-writing-mode: vertical-rl;
             writing-mode: vertical-rl;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+
+            /* 2ページ目以降を適切に改ページするための指定 */
+            page-break-after: always;
+            break-after: page;
+            margin-bottom: 20px;
+            /* 画面プレビュー時のページ間の隙間 */
         }
 
         .pdf-header {
@@ -335,7 +341,7 @@
         }
 
         .pdf-title {
-            font-size: 18pt;
+            font-size: 16pt;
             font-weight: bold;
             color: #3b74c4;
             margin: 0 0 0 10pt;
@@ -346,13 +352,33 @@
             font-size: 9pt;
             color: #444;
             display: flex;
+            flex-direction: column;
             line-height: 1.8;
             letter-spacing: 1px;
+            height: 180mm;
+            /* ヘッダー高さ全体に広げる */
         }
 
-        .pdf-meta div {
+        /* 日時・場所のグループ */
+        .meta-top {
             margin-left: 10px;
-            margin-bottom: 30px;
+            display: inline-flex;
+        }
+
+        .meta-top div {
+            margin-bottom: 15px;
+        }
+
+        /* 司会・参加者のグループ（下揃えにする設定） */
+        .meta-bottom {
+            margin-top: auto;
+            /* 縦書きの行末（紙面の下側）へ押し出す */
+            max-height: 130mm;
+        }
+
+        .meta-bottom div {
+            /* padding-top: em; */
+            text-indent: -4.2em;
         }
 
         .tanka-container {
@@ -369,6 +395,10 @@
             line-height: 2.2;
             letter-spacing: 2px;
             padding-left: 15px;
+
+            /* 短歌の途中での改ページを防止 */
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .tanka-number {
@@ -405,8 +435,9 @@
 <body>
 
     <header class="app-header">
-        <h1>短歌詠草集・解題作成ツール</h1>
+        <h1>歌会詠草集・解題作成ツール</h1>
         <p>短歌を1首ずつブラインド入力し、シャッフルされた縦書きPDF（詠草集・解題）を作成します</p>
+        <p>&copy; Seiji Fujimura</p>
     </header>
 
     <div class="screen-container">
@@ -414,7 +445,7 @@
         <div class="step-progress-bar">
             <div id="progress-step-1" class="step-progress-item active">1. 歌会情報・参加者</div>
             <div id="progress-step-2" class="step-progress-item">2. 詠草入力</div>
-            <div id="progress-step-3" class="step-progress-item">3. 結果・ダウンロード</div>
+            <div id="progress-step-3" class="step-progress-item">3. 出力・ダウンロード</div>
         </div>
 
         <!-- STEP 1 -->
@@ -424,7 +455,7 @@
 
             <div class="input-group">
                 <label for="event-title">歌会タイトル</label>
-                <input type="text" id="event-title" class="input-field" placeholder="例: 定例歌会（未入力の場合は「歌会」となります）">
+                <input type="text" id="event-title" class="input-field" placeholder="例: 定例歌会">
             </div>
 
             <div class="input-group">
@@ -433,7 +464,7 @@
             </div>
 
             <div class="input-group">
-                <label for="event-location">場所</label>
+                <label for="event-location">会場</label>
                 <input type="text" id="event-location" class="input-field" placeholder="例: サークル室A">
             </div>
 
@@ -506,7 +537,7 @@
 
         <!-- STEP 3 -->
         <div id="step-3" class="hidden">
-            <h2>Step 3. 結果プレビュー・出力オプション</h2>
+            <h2>Step 3. 版面プレビュー・出力オプション</h2>
             <p class="step-desc">短歌の順序がシャッフルされました。<br>画面上でプレビューを確認し、各種出力オプションを選択できます。</p>
 
             <!-- 1. Body領域内に埋め込まれた詠草集（作者なし）版面 -->
@@ -514,12 +545,16 @@
             <div class="preview-embedded-wrapper">
                 <div id="embedded-eiso-page" class="pdf-page">
                     <div class="pdf-header">
-                        <h1 class="pdf-title" id="embed-title">歌会 詠草集</h1>
+                        <h1 class="pdf-title" id="embed-title">歌会</h1>
                         <div class="pdf-meta">
-                            <div id="embed-date">日時：</div>
-                            <div id="embed-location">場所：</div>
-                            <div id="embed-mc">司会者：</div>
-                            <div id="embed-members">参加者：</div>
+                            <div class="meta-top">
+                                <div id="embed-date">日時：</div>
+                                <div id="embed-location">会場：</div>
+                            </div>
+                            <div class="meta-bottom">
+                                <div id="embed-mc">司会者：</div>
+                                <div id="embed-members">参加者：</div>
+                            </div>
                         </div>
                     </div>
                     <div class="tanka-container" id="embed-tanka-list"></div>
@@ -560,10 +595,14 @@
             <div class="pdf-header">
                 <h1 class="pdf-title" id="pdf-doc-title">歌会 詠草集</h1>
                 <div class="pdf-meta">
-                    <div id="print-date">日時：</div>
-                    <div id="print-location">場所：</div>
-                    <div id="print-mc">司会者：</div>
-                    <div id="print-members">参加者：</div>
+                    <div class="meta-top">
+                        <div id="print-date">日時：</div>
+                        <div id="print-location">会場：</div>
+                    </div>
+                    <div class="meta-bottom">
+                        <div id="print-mc">司会者：</div>
+                        <div id="print-members">参加者：</div>
+                    </div>
                 </div>
             </div>
             <div class="tanka-container" id="tanka-list"></div>
@@ -832,7 +871,7 @@
             const displayTitle = eventInfo.title;
             document.getElementById('embed-title').textContent = `${displayTitle} 詠草集`;
             document.getElementById('embed-date').textContent = '日時：' + (eventInfo.date || '未設定');
-            document.getElementById('embed-location').textContent = '場所：' + (eventInfo.location || '未設定');
+            document.getElementById('embed-location').textContent = '会場：' + (eventInfo.location || '未設定');
             document.getElementById('embed-mc').textContent = '司会者：' + (eventInfo.mc || '未設定');
 
             const generalMembers = membersList.filter(member => member !== eventInfo.mc);
@@ -845,11 +884,6 @@
                 const tankaDiv = document.createElement('div');
                 tankaDiv.className = 'tanka';
 
-                // const numDiv = document.createElement('div');
-                // numDiv.className = 'tanka-number';
-                // numDiv.textContent = `【第${index + 1}首】`;
-                // tankaDiv.appendChild(numDiv);
-
                 const textSpan = document.createElement('span');
                 textSpan.innerHTML = buildTankaHTML(item.text, item.rubyPairs);
                 tankaDiv.appendChild(textSpan);
@@ -859,29 +893,89 @@
         }
 
         // PDFおよび別ウィンドウ表示用の完全なHTMLドキュメントを生成する関数
-        function generatePdfHTML(isKaidai) {
+        function generatePdfHTML(isKaidai, isForDownload = false) {
             const displayTitle = eventInfo.title || '歌会';
             const pageTitle = isKaidai ? `${displayTitle} 解題` : `${displayTitle} 詠草集`;
             const generalMembers = membersList.filter(member => member !== eventInfo.mc);
             const membersStr = generalMembers.join(' ') || 'なし';
 
-            let tankaHTML = '';
-            shuffledTankaList.forEach((item, index) => {
-                const textWithRuby = buildTankaHTML(item.text, item.rubyPairs);
-                let authorHTML = '';
-                if (isKaidai && item.author) {
-                    authorHTML = `<div class="tanka-author">${item.author}</div>`;
-                }
+            // 1ページあたりの収容可能数の目安
+            // （ヘッダーがある1ページ目は5首、2ページ目以降は7首で分割）
+            const FIRST_PAGE_LIMIT = 5;
+            const SUBSEQUENT_PAGE_LIMIT = 7;
 
-                tankaHTML += `
+            // 短歌データをページごとに分割する処理
+            const pagesTankaData = [];
+            let currentList = [...shuffledTankaList];
+
+            if (currentList.length > 0) {
+                pagesTankaData.push(currentList.splice(0, FIRST_PAGE_LIMIT));
+            }
+            while (currentList.length > 0) {
+                pagesTankaData.push(currentList.splice(0, SUBSEQUENT_PAGE_LIMIT));
+            }
+
+            // 全ページのHTMLを組み立て
+            let pagesHTML = '';
+            let globalIndex = 0; // 通し番号のカウント
+
+            pagesTankaData.forEach((pageItems, pageIdx) => {
+                let tankaHTML = '';
+                pageItems.forEach(item => {
+                    globalIndex++;
+                    const textWithRuby = buildTankaHTML(item.text, item.rubyPairs);
+                    let authorHTML = '';
+                    if (isKaidai && item.author) {
+                        authorHTML = `<div class="tanka-author">${item.author}</div>`;
+                    }
+
+                    tankaHTML += `
                     <div class="tanka">
                         <span>${textWithRuby}</span>
                         ${authorHTML}
                     </div>
                 `;
+                });
+
+                // 1ページ目のみ歌会情報ヘッダーを付与
+                let headerHTML = '';
+                if (pageIdx === 0) {
+                    headerHTML = `
+                        <div class="pdf-header">
+                          <h1 class="pdf-title">${pageTitle}</h1>
+                          <div class="pdf-meta">
+                             <div class="meta-top">
+                                 <div>日時：${eventInfo.date || '未設定'}</div>
+                                 <div>会場：${eventInfo.location || '未設定'}</div>
+                             </div>
+                             <div class="meta-bottom">
+                                 <div>司会者：${eventInfo.mc || '未設定'}</div>
+                                 <div>参加者：${membersStr}</div>
+                             </div>
+                          </div>
+                        </div>
+                    `;
+                } else {
+                    // 2ページ目以降のヘッダー（ヘッダーなし、あるいは簡易タイトル）
+                    headerHTML = `
+                        <div class="pdf-header" style="border-left: none; padding-left: 0; margin-left: 10px;">
+                          <div style="font-size: 10pt; color: #888;">${pageTitle}（${pageIdx + 1}ページ）</div>
+                        </div>
+                    `;
+                }
+
+                // 1ページ分（A4横）の枠を生成
+                pagesHTML += `
+                    <div class="pdf-page">
+                        ${headerHTML}
+                        <div class="tanka-container">
+                            ${tankaHTML}
+                        </div>
+                    </div>
+                `;
             });
 
-            // ダウンロード時は背景グレー・外側余白を排除（位置ズレ防止）
+            // ダウンロード時は余白・影を削除して原点ズレを防止
             const bodyStyle = isForDownload
                 ? 'margin: 0; padding: 0; background-color: #fff; display: block;'
                 : 'margin: 0; padding: 40px; background-color: #525659; display: flex; justify-content: center;';
@@ -897,6 +991,10 @@
     ${bodyStyle}
     font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
   }
+      @media print {
+    body { background-color: #fff; padding: 0; }
+    .pdf-page { box-shadow: none !important; margin-bottom: 0 !important; }
+  }
   .pdf-page {
     width: 297mm;
     height: 210mm;
@@ -907,6 +1005,9 @@
     ${isForDownload ? '' : 'box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);'}
     -webkit-writing-mode: vertical-rl;
     writing-mode: vertical-rl;
+    page-break-after: always;
+    break-after: page;
+    margin-bottom: 30px;
   }
   .pdf-header {
     border-left: 2px solid #669BE1;
@@ -915,7 +1016,7 @@
     height: 180mm;
   }
   .pdf-title {
-    font-size: 18pt;
+    font-size: 16pt;
     font-weight: bold;
     color: #3b74c4;
     margin: 0 0 0 10pt;
@@ -925,13 +1026,32 @@
     font-size: 9pt;
     color: #444;
     display: flex;
+    flex-direction: column;
     line-height: 1.8;
     letter-spacing: 1px;
+    height: 180mm;/* ヘッダー高さ全体に広げる */
   }
-  .pdf-meta div {
-    margin-left: 10px;
-    margin-bottom: 30px;
-  }
+    /* 日時・場所のグループ */
+        .meta-top {
+            margin-left: 10px;
+            display: inline-flex;
+        }
+
+        .meta-top div {
+            margin-bottom: 15px;
+        }
+
+        /* 司会・参加者のグループ（下揃えにする設定） */
+        .meta-bottom {
+            margin-top: auto;
+            /* 縦書きの行末（紙面の下側）へ押し出す */
+            max-height: 130mm;
+        }
+
+        .meta-bottom div {
+            /* padding-top: em; */
+            text-indent: -4.2em;
+        }
   .tanka-container {
     height: 180mm;
     width: 100%;
@@ -957,32 +1077,17 @@
 </style>
 </head>
 <body>
-  <div class="pdf-page">
-    <div class="pdf-header">
-      <h1 class="pdf-title">${pageTitle}</h1>
-      <div class="pdf-meta">
-        <div>日時：${eventInfo.date || '未設定'}</div>
-        <div>場所：${eventInfo.location || '未設定'}</div>
-        <div>司会者：${eventInfo.mc || '未設定'}</div>
-        <div>参加者：${membersStr}</div>
-      </div>
-    </div>
-    <div class="tanka-container">
-      ${tankaHTML}
-    </div>
-  </div>
+${pagesHTML}
 </body>
 </html>`;
         }
 
-        // PDF直接ダウンロード関数（レンダリング同期処理）
+        // PDF直接ダウンロード関数（位置ズレ防止・キャプチャ同期処理）
         function downloadPDF(isKaidai) {
             const baseName = eventInfo.title || '歌会';
             const filename = isKaidai ? `${baseName}_解題.pdf` : `${baseName}_詠草集.pdf`;
-            // 第二引数に true を渡して余白なしのクリーンなHTMLを出力させる
             const htmlString = generatePdfHTML(isKaidai, true);
 
-            // 一時的にキャプチャ用 iframe を作成
             const iframe = document.createElement('iframe');
             iframe.style.position = 'fixed';
             iframe.style.left = '0';
@@ -996,7 +1101,6 @@
 
             const doc = iframe.contentWindow.document;
 
-            // iframe 内のHTMLロード完了後にPDFキャプチャを実行
             iframe.onload = () => {
                 setTimeout(() => {
                     const targetElement = doc.querySelector('.pdf-page');
@@ -1007,7 +1111,7 @@
                         html2canvas: {
                             scale: 2,
                             useCORS: true,
-                            scrollY: 0, // スクロールオフセットによる位置ズレを強制リセット
+                            scrollY: 0,
                             scrollX: 0
                         },
                         jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
@@ -1019,7 +1123,7 @@
                         console.error(err);
                         document.body.removeChild(iframe);
                     });
-                }, 400); // 描画・レイアウト確定を待つウェイト
+                }, 400);
             };
 
             doc.open();
@@ -1029,7 +1133,7 @@
 
         // 新しいウィンドウ（別タブ）で版面を開く機能
         function openInNewWindow(isKaidai) {
-            const htmlString = generatePdfHTML(isKaidai);
+            const htmlString = generatePdfHTML(isKaidai, false);
             const win = window.open('', '_blank');
             if (!win) {
                 alert('ポップアップがブロックされました。ブラウザのポップアップブロックを解除してください。');
@@ -1059,7 +1163,6 @@
                 }
             }
 
-            // 参加者が1人も登録されていない場合、解題のオプションを非表示に
             if (membersList.length === 0) {
                 kaidaiOptionBox.classList.add('hidden');
             } else {
