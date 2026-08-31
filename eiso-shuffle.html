@@ -569,14 +569,14 @@
             </div>
 
             <div class="btn-group">
-                <button id="to-step-2-btn" class="btn-primary" type="button">次へ（歌を入力）</button>
+                <button id="to-step-2-btn" class="btn-primary" type="button">次へ（詠草の登録）</button>
             </div>
         </div>
 
         <!-- STEP 2 -->
         <div id="step-2" class="hidden">
-            <h2>Step 2. 短歌と作者の入力</h2>
-            <p class="step-desc">作者を選択し、短歌を入力後「次の歌を入力」を押してください。<br>※一度登録された作者は選択肢から自動で除外されます。</p>
+            <h2>Step 2. 詠草と作者の入力</h2>
+            <p class="step-desc">作者を選択し、詠草を入力後「登録」を押してください。<br>※一度登録された作者は選択肢から自動で除外されます。</p>
 
             <div class="input-group">
                 <label>作者</label>
@@ -584,8 +584,8 @@
             </div>
 
             <div class="input-group">
-                <label for="tanka-input">短歌</label>
-                <input type="text" id="tanka-input" class="input-field" placeholder="短歌を入力..." autofocus>
+                <label for="tanka-input">詠草</label>
+                <input type="text" id="tanka-input" class="input-field" placeholder="詠草を入力..." autofocus>
 
                 <div>
                     <button type="button" id="toggle-ruby-btn" class="ruby-toggle-btn">＋ ルビ（ふりがな）を追加する</button>
@@ -609,7 +609,7 @@
             </div>
 
             <div class="btn-group">
-                <button id="next-tanka-btn" class="btn-success" type="button">次の歌を入力</button>
+                <button id="next-tanka-btn" class="btn-success" type="button">登録</button>
                 <button id="finish-btn" class="btn-primary" type="button">完了（シャッフルする）</button>
                 <button id="back-to-step1-btn" class="btn-secondary" type="button">歌会情報を変更</button>
                 <button id="reset-btn" class="btn-secondary" type="button">リセット</button>
@@ -632,8 +632,7 @@
                 </div>
                 <div id="confirm-tanka-list" class="confirm-tanka-list"></div>
                 <div class="add-tanka-btn-wrapper">
-                    <button id="modal-open-new-tanka-btn" class="btn-secondary btn-small" type="button">+ 詠草を追加
-                        ✎</button>
+                    <button id="modal-open-new-tanka-btn" class="btn-secondary btn-small" type="button">+ 詠草を追加</button>
                 </div>
             </div>
 
@@ -924,7 +923,7 @@
         nextTankaBtn.addEventListener('click', () => {
             const textVal = tankaInput.value.trim();
             if (!textVal) {
-                alert('短歌を入力してください。');
+                alert('詠草を入力してください。');
                 return;
             }
 
@@ -1035,7 +1034,7 @@
         // STEP 3 内の横書き「入力確認」領域の描画
         function renderConfirmArea() {
             const displayTitle = eventInfo.title;
-            document.getElementById('confirm-title').textContent = `${displayTitle} 詠草集`;
+            document.getElementById('confirm-title').textContent = `${displayTitle}`;
 
             const generalMembers = membersList.filter(member => member !== eventInfo.mc);
             const metaStr = `日時：${eventInfo.date || '未設定'} | 会場：${eventInfo.location || '未設定'} | 司会：${eventInfo.mc || '未設定'} | 参加者：${generalMembers.join(' ') || 'なし'}`;
@@ -1275,7 +1274,7 @@
         modalTankaSaveBtn.addEventListener('click', () => {
             const textVal = modalTankaInput.value.trim();
             if (!textVal) {
-                alert('短歌を入力してください。');
+                alert('詠草を入力してください。');
                 return;
             }
 
@@ -1334,7 +1333,7 @@
         // PDFおよび別ウィンドウ表示用の完全なHTMLドキュメントを生成する関数
         function generatePdfHTML(isKaidai, autoPrint = false) {
             const displayTitle = eventInfo.title || '歌会';
-            const pageTitle = isKaidai ? `${displayTitle} 解題` : `${displayTitle} 詠草集`;
+            const pageTitle = isKaidai ? `${displayTitle} 解題` : `${displayTitle}`;
             const generalMembers = membersList.filter(member => member !== eventInfo.mc);
             const membersStr = generalMembers.join(' ') || 'なし';
 
@@ -1425,6 +1424,12 @@
     size: A4 landscape;
     margin: 0;
   }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
   body {
     margin: 0;
     padding: 40px;
@@ -1440,16 +1445,23 @@
       padding: 0 !important;
       margin: 0 !important;
       display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow: visible !important;
     }
     .pdf-page {
       box-shadow: none !important;
       margin: 0 !important;
-      width: 297mm !important;
-      height: 210mm !important;
+      width: 100% !important;
+      height: 100% !important;
+      padding: 15mm !important;
       page-break-after: always !important;
       break-after: page !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
     }
-    .pdf-page:last-child {
+    .pdf-page:last-child,
+    .pdf-page:last-of-type {
       page-break-after: avoid !important;
       break-after: avoid !important;
     }
@@ -1464,8 +1476,6 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     -webkit-writing-mode: vertical-rl;
     writing-mode: vertical-rl;
-    page-break-after: always;
-    break-after: page;
     margin-bottom: 30px;
   }
   .pdf-header {
@@ -1551,7 +1561,7 @@ ${pagesHTML}
         // STEP 2 -> STEP 3
         finishBtn.addEventListener('click', () => {
             if (tankaInput.value.trim() !== '') {
-                if (!confirm('入力欄に未保存の短歌があります。「次の歌を入力」を押さずに完了へ進みますか？')) {
+                if (!confirm('入力欄に未保存の短歌があります。「登録」を押さずに完了へ進みますか？')) {
                     return;
                 }
             }
@@ -1600,7 +1610,7 @@ ${pagesHTML}
                 remainingAuthors = [...membersList];
                 tankaCount.textContent = '0';
                 tankaInput.value = '';
-                nextTankaBtn.textContent = '次の歌を入力';
+                nextTankaBtn.textContent = '登録';
                 renderAuthorRadioButtons();
                 tankaInput.focus();
             }
@@ -1617,7 +1627,7 @@ ${pagesHTML}
                 eventDateInput.value = '';
                 eventLocationInput.value = '';
                 tankaInput.value = '';
-                nextTankaBtn.textContent = '次の歌を入力';
+                nextTankaBtn.textContent = '登録';
                 memberListContainer.innerHTML = `
           <div style="margin-bottom: 8px; font-size: 0.85rem; color: #666;">
             <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
