@@ -233,6 +233,14 @@
             transform: scale(0.98);
         }
 
+        button:disabled {
+            background-color: #cbd5e0 !important;
+            color: #a0aec0 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
         .btn-primary {
             background-color: #669BE1;
             color: #fff;
@@ -416,7 +424,8 @@
         .pdf-page {
             width: 297mm;
             height: 210mm;
-            padding: 15mm;
+            /* padding: 15mm; */
+            padding: 0;
             background-color: #fff;
             color: #2b2b2b;
             font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
@@ -427,7 +436,7 @@
 
             page-break-after: always;
             break-after: page;
-            margin-bottom: 20px;
+            /* margin-bottom: 20px; */
         }
 
         .pdf-header {
@@ -477,7 +486,7 @@
 
         .tanka-container {
             height: 180mm;
-            width: 100%;
+            width: auto;
             padding-top: 5mm;
             margin-right: 50px;
         }
@@ -601,7 +610,7 @@
                         style="margin-top: 4px;">+ ルビ枠を追加</button>
                 </div>
 
-                <div class="count-info">現在の入力数: <span id="tanka-count">0</span> 首</div>
+                <div class="count-info">現在の入力数: <span id="tanka-count">0</span></div>
             </div>
 
             <div class="input-group">
@@ -610,8 +619,8 @@
             </div>
 
             <div class="btn-group">
-                <button id="next-tanka-btn" class="btn-success" type="button">登録</button>
-                <button id="finish-btn" class="btn-primary" type="button">完了（シャッフルする）</button>
+                <button id="next-tanka-btn" class="btn-success" type="button" disabled>登録</button>
+                <button id="finish-btn" class="btn-primary" type="button" disabled>完了（シャッフルする）</button>
                 <button id="back-to-step1-btn" class="btn-secondary" type="button">歌会情報を変更</button>
                 <button id="reset-btn" class="btn-secondary" type="button">リセット</button>
             </div>
@@ -870,6 +879,44 @@
             }
         }
 
+        function updateNextTankaBtnState() {
+            const textVal = tankaInput.value.trim();
+            const currentCount = tankaDataList.length;
+            const totalMembers = membersList.length;
+
+            // 1. カウント表示の更新（参加者が設定されている場合は分数表示）
+            if (totalMembers > 0) {
+                tankaCount.textContent = `${currentCount} / ${totalMembers} 首`;
+            } else {
+                tankaCount.textContent = `${currentCount} 首`;
+            }
+
+            // 2. ボタンのアクティブ状態判定
+            if (!textVal) {
+                nextTankaBtn.disabled = true;
+            } else if (totalMembers > 0 && currentCount >= totalMembers) {
+                nextTankaBtn.disabled = true;
+            } else {
+                nextTankaBtn.disabled = false;
+            }
+
+            if (totalMembers > 0) {
+                // 参加者が設定されている場合、全員分の歌が揃うまで無効化
+                if (currentCount < totalMembers) {
+                    finishBtn.disabled = true;
+                } else {
+                    finishBtn.disabled = false;
+                }
+            } else {
+                // 参加者が未設定（0人）の場合は、1首以上登録されていれば有効化
+                if (currentCount === 0) {
+                    finishBtn.disabled = true;
+                } else {
+                    finishBtn.disabled = false;
+                }
+            }
+        }
+
         toStep2Btn.addEventListener('click', () => {
             eventInfo.title = eventTitleInput.value.trim() || '歌会';
             eventInfo.date = eventDateInput.value.trim();
@@ -902,6 +949,7 @@
             });
 
             renderAuthorRadioButtons();
+            updateNextTankaBtnState();
 
             step1.classList.add('hidden');
             step2.classList.remove('hidden');
@@ -914,6 +962,8 @@
             step1.classList.remove('hidden');
             updateProgressIndicator(1);
         });
+
+        tankaInput.addEventListener('input', updateNextTankaBtnState);
 
         tankaInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -951,6 +1001,8 @@
                         rubyPairs.push({ target, ruby });
                     }
                 }
+
+
             });
 
             if (hasMissingTarget) {
@@ -980,6 +1032,7 @@
 
             tankaCount.textContent = tankaDataList.length;
             renderAuthorRadioButtons();
+            updateNextTankaBtnState();
             tankaInput.focus();
         });
 
@@ -1415,135 +1468,134 @@
             <\/script>` : '';
 
             return `<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<title>${pageTitle}</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; }
-  @page {
-    size: A4 landscape;
-    margin: 0;
-  }
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-  }
-  body {
-    margin: 0;
-    padding: 40px;
-    background-color: #525659;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
-  }
-  @media print {
-    body {
-      background-color: transparent !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      display: block !important;
-      width: 100% !important;
-      height: 100% !important;
-      overflow: visible !important;
-    }
-    .pdf-page {
-      box-shadow: none !important;
-      margin: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      padding: 15mm !important;
-      page-break-after: always !important;
-      break-after: page !important;
-      page-break-inside: avoid !important;
-      break-inside: avoid !important;
-    }
-    .pdf-page:last-child,
-    .pdf-page:last-of-type {
-      page-break-after: avoid !important;
-      break-after: avoid !important;
-    }
-  }
-  .pdf-page {
-    width: 297mm;
-    height: 210mm;
-    padding: 15mm;
-    background-color: #fff;
-    color: #2b2b2b;
-    box-sizing: border-box;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    -webkit-writing-mode: vertical-rl;
-    writing-mode: vertical-rl;
-    margin-bottom: 30px;
-  }
-  .pdf-header {
-    border-left: 2px solid #669BE1;
-    padding-left: 15px;
-    margin-left: 25px;
-    height: 180mm;
-  }
-  .pdf-title {
-    font-size: 16pt;
-    font-weight: bold;
-    color: #3b74c4;
-    margin: 0 0 0 10pt;
-    letter-spacing: 2px;
-  }
-  .pdf-meta {
-    font-size: 9pt;
-    color: #444;
-    display: flex;
-    flex-direction: column;
-    line-height: 1.8;
-    letter-spacing: 1px;
-    height: 180mm;
-  }
-  .meta-top {
-    margin-left: 10px;
-    display: inline-flex;
-  }
-  .meta-top div {
-    margin-bottom: 15px;
-  }
-  .meta-bottom {
-    margin-top: auto;
-    max-height: 130mm;
-  }
-  .meta-bottom div {
-    text-indent: -4.2em;
-  }
-  .tanka-container {
-    height: 180mm;
-    width: 100%;
-    padding-top: 5mm;
-    margin-right: 50px;
-  }
-  .tanka {
-    margin-left: 30px;
-    margin-right: 5px;
-    font-size: 13pt;
-    line-height: 2.2;
-    letter-spacing: 2px;
-    padding-left: 15px;
-  }
-  .tanka-author {
-    font-size: 10pt;
-    color: #333;
-    margin-top: 20px;
-    text-align: right;
-  }
-  ruby { ruby-align: center; }
-  rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
-</style>
-${printScript}
-</head>
-<body>
-${pagesHTML}
-</body>
-</html>`;
+                        <html lang="ja">
+                        <head>
+                        <meta charset="UTF-8">
+                        <title>${pageTitle}</title>
+                        <style>
+                        *, *::before, *::after { box-sizing: border-box; }
+                        @page {
+                            size: A4 landscape;
+                            margin: 0;
+                        }
+                        html, body {
+                            margin: 0;
+                            padding: 0;
+                            width: 100%;
+                            height: 100%;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 40px;
+                            background-color: #525659;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
+                        }
+                        @media print {
+                            body {
+                            background-color: transparent !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            display: block !important;
+                            width: 100% !important;
+                            height: 100% !important;
+                            overflow: visible !important;
+                            }
+                            .pdf-page {
+                            box-shadow: none !important;
+                            margin: 0 !important;
+                            width: 100% !important;
+                            height: 100% !important;
+                            padding: 15mm !important;
+                            page-break-after: always !important;
+                            break-after: page !important;
+                            page-break-inside: avoid !important;
+                            break-inside: avoid !important;
+                            }
+                            .pdf-page:last-child,
+                            .pdf-page:last-of-type {
+                            page-break-after: avoid !important;
+                            break-after: avoid !important;
+                            }
+                        }
+                        .pdf-page {
+                            width: 297mm;
+                            height: 210mm;
+                            padding: 15mm;
+                            background-color: #fff;
+                            color: #2b2b2b;
+                            box-sizing: border-box;
+                            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                            -webkit-writing-mode: vertical-rl;
+                            writing-mode: vertical-rl;
+                        }
+                        .pdf-header {
+                            border-left: 2px solid #669BE1;
+                            padding-left: 15px;
+                            margin-left: 25px;
+                            height: 180mm;
+                        }
+                        .pdf-title {
+                            font-size: 16pt;
+                            font-weight: bold;
+                            color: #3b74c4;
+                            margin: 0 0 0 10pt;
+                            letter-spacing: 2px;
+                        }
+                        .pdf-meta {
+                            font-size: 9pt;
+                            color: #444;
+                            display: flex;
+                            flex-direction: column;
+                            line-height: 1.8;
+                            letter-spacing: 1px;
+                            height: 180mm;
+                        }
+                        .meta-top {
+                            margin-left: 10px;
+                            display: inline-flex;
+                        }
+                        .meta-top div {
+                            margin-bottom: 15px;
+                        }
+                        .meta-bottom {
+                            margin-top: auto;
+                            max-height: 130mm;
+                        }
+                        .meta-bottom div {
+                            text-indent: -4.2em;
+                        }
+                        .tanka-container {
+                            height: 180mm;
+                            width: auto;
+                            padding-top: 5mm;
+                            margin-right: 50px;
+                        }
+                        .tanka {
+                            margin-left: 30px;
+                            margin-right: 5px;
+                            font-size: 13pt;
+                            line-height: 2.2;
+                            letter-spacing: 2px;
+                            padding-left: 15px;
+                        }
+                        .tanka-author {
+                            font-size: 10pt;
+                            color: #333;
+                            margin-top: 20px;
+                            text-align: right;
+                        }
+                        ruby { ruby-align: center; }
+                        rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
+                        </style>
+                        ${printScript}
+                        </head>
+                        <body>
+                        ${pagesHTML}
+                        </body>
+                        </html>`;
         }
 
         // 新しいウィンドウ（別タブ）で版面を開く機能
@@ -1612,6 +1664,7 @@ ${pagesHTML}
                 tankaCount.textContent = '0';
                 tankaInput.value = '';
                 nextTankaBtn.textContent = '登録';
+                updateNextTankaBtnState();
                 renderAuthorRadioButtons();
                 tankaInput.focus();
             }
@@ -1646,6 +1699,23 @@ ${pagesHTML}
                 step3.classList.add('hidden');
                 step1.classList.remove('hidden');
                 updateProgressIndicator(1);
+            }
+        });
+
+
+        // ページ離脱（リロードやブラウザバック、タブ閉じ）時の警告処理
+        window.addEventListener('beforeunload', (e) => {
+            // 短歌データまたは歌会情報/参加者が入力されている場合のみ警告を発生させる
+            const hasEnteredData = tankaDataList.length > 0 ||
+                membersList.length > 0 ||
+                eventTitleInput.value.trim() !== '' ||
+                eventDateInput.value.trim() !== '' ||
+                eventLocationInput.value.trim() !== '';
+
+            if (hasEnteredData) {
+                e.preventDefault();
+                // Modern browsers require setting e.returnValue
+                e.returnValue = '';
             }
         });
     </script>
