@@ -162,6 +162,7 @@
             font-size: 1.1rem;
             cursor: pointer;
             padding: 0 4px;
+            -webkit-user-select: none;
             user-select: none;
         }
 
@@ -720,7 +721,6 @@
             });
         }
 
-        // 参加者入力欄の削除処理
         function removeMemberRow(btnEl) {
             const row = btnEl.closest('.member-item');
             if (row) {
@@ -811,9 +811,8 @@
                 tankaCount.textContent = `${currentCount} 首`;
             }
 
-            if (!textVal) {
-                registerTankaBtn.disabled = true;
-            } else if (totalMembers > 0 && currentCount >= totalMembers) {
+            // テキスト未入力、または未登録の作者がいない場合はボタンを無効化
+            if (!textVal || (totalMembers > 0 && remainingAuthors.length === 0)) {
                 registerTankaBtn.disabled = true;
             } else {
                 registerTankaBtn.disabled = false;
@@ -826,7 +825,6 @@
             }
         }
 
-        // Step 1 の入力内容を取り込んでデータ更新・整合性チェックを行う関数
         function saveStep1Data() {
             eventInfo.title = eventTitleInput.value.trim() || '歌会';
             eventInfo.date = eventDateInput.value.trim();
@@ -843,7 +841,7 @@
                 const val = input.value.trim();
                 if (val) {
                     if (newMembersList.includes(val)) {
-                        return; // 重複する名前はスキップ
+                        return;
                     }
                     newMembersList.push(val);
                     if (mcIndex !== "" && parseInt(mcIndex, 10) === idx) {
@@ -855,7 +853,6 @@
             membersList = newMembersList;
             eventInfo.mc = mcName;
 
-            // 削除・変更された参加者の短歌作者情報を不整合がないようクリーニング
             tankaDataList.forEach(item => {
                 if (item.author && !membersList.includes(item.author)) {
                     item.author = '';
@@ -968,7 +965,6 @@
                 selectedAuthor = checkedRadio.value;
             }
 
-            // 参加者が設定されている場合は作者の選択を必須化
             if (membersList.length > 0 && !selectedAuthor) {
                 alert('作者を選択してください。');
                 return;
@@ -1035,7 +1031,6 @@
             renderConfirmArea();
         }
 
-        // STEP 3 内の横書き「入力確認」領域の描画
         function renderConfirmArea() {
             document.getElementById('confirm-title').textContent = `${eventInfo.title}`;
 
@@ -1069,9 +1064,6 @@
             });
         }
 
-        /* --- モーダルによる専用編集ダイアログ機能 --- */
-
-        // 1. 歌会情報編集モーダル
         document.getElementById('confirm-header').addEventListener('click', openEventModal);
 
         function openEventModal() {
@@ -1159,14 +1151,12 @@
             membersList = newMembersList;
             eventInfo.mc = mcName;
 
-            // 削除された参加者の短歌の作者情報を不整合がないようクリーニング
             tankaDataList.forEach(item => {
                 if (item.author && !membersList.includes(item.author)) {
                     item.author = '';
                 }
             });
 
-            // Step1の画面の同期
             memberListContainer.innerHTML = `
                 <div style="margin-bottom: 8px; font-size: 0.85rem; color: #666;">
                     <label style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
@@ -1196,7 +1186,6 @@
             editEventModal.classList.add('hidden');
         });
 
-        // 2. 短歌編集モーダル
         function openTankaModal(itemRef) {
             if (!itemRef) return;
             editingTankaRef = itemRef;
@@ -1343,8 +1332,10 @@
             const generalMembers = membersList.filter(member => member !== eventInfo.mc);
             const membersStr = generalMembers.join(' ') || 'なし';
 
-            const FIRST_PAGE_LIMIT = 7;
-            const SUBSEQUENT_PAGE_LIMIT = 9;
+            // 1ページあたりの最大収納数の調整（はみ出しを確実に防ぐ上限設定）
+            // 1ページ目はヘッダー情報があるため最大5首、2ページ目以降は最大7首に制限
+            const FIRST_PAGE_LIMIT = 5;
+            const SUBSEQUENT_PAGE_LIMIT = 7;
 
             const pagesTankaData = [];
             let currentList = [...shuffledTankaList];
@@ -1368,185 +1359,211 @@
                     }
 
                     tankaHTML += `
-                    <div class="tanka">
-                        <span>${textWithRuby}</span>
-                        ${authorHTML}
-                    </div>
-                `;
+            <div class="tanka">
+                <span>${textWithRuby}</span>
+                ${authorHTML}
+            </div>
+        `;
                 });
 
                 let headerHTML = '';
                 if (pageIdx === 0) {
                     headerHTML = `
-                        <div class="pdf-header">
-                          <h1 class="pdf-title">${pageTitle}</h1>
-                          <div class="pdf-meta">
-                             <div class="meta-top">
-                                 <div>日時：${eventInfo.date || '未設定'}</div>
-                                 <div>会場：${eventInfo.location || '未設定'}</div>
-                             </div>
-                             <div class="meta-bottom">
-                                 <div>司会者：${eventInfo.mc || '未設定'}</div>
-                                 <div>参加者：${membersStr}</div>
-                             </div>
-                          </div>
-                        </div>
-                    `;
+                <div class="pdf-header">
+                  <h1 class="pdf-title">${pageTitle}</h1>
+                  <div class="pdf-meta">
+                     <div class="meta-top">
+                         <div>日時：${eventInfo.date || '未設定'}</div>
+                         <div>会場：${eventInfo.location || '未設定'}</div>
+                     </div>
+                     <div class="meta-bottom">
+                         <div>司会者：${eventInfo.mc || '未設定'}</div>
+                         <div>参加者：${membersStr}</div>
+                     </div>
+                  </div>
+                </div>
+            `;
                 } else {
                     headerHTML = `
-                        <div class="pdf-header" style="border-left: none; padding-left: 0; margin-left: 10px;">
-                          <div style="font-size: 10pt; color: #888;">${pageTitle}（${pageIdx + 1}ページ）</div>
-                        </div>
-                    `;
+                <div class="pdf-header" style="border-left: none; padding-left: 0; margin-left: 10px;">
+                  <div style="font-size: 10pt; color: #888;">${pageTitle}（${pageIdx + 1}ページ）</div>
+                </div>
+            `;
                 }
 
                 pagesHTML += `
-                    <div class="pdf-page">
-                        ${headerHTML}
-                        <div class="tanka-container">
-                            ${tankaHTML}
-                        </div>
-                    </div>
-                `;
+            <div class="pdf-page">
+                ${headerHTML}
+                <div class="tanka-container">
+                    ${tankaHTML}
+                </div>
+            </div>
+        `;
             });
 
             const printScript = autoPrint ? `<script>
-              window.addEventListener('DOMContentLoaded', () => {
-                setTimeout(() => {
-                  window.print();
-                }, 300);
-              });
-            <\/script>` : '';
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          window.print();
+        }, 300);
+      });
+    <\/script>` : '';
 
             return `<!DOCTYPE html>
-                <html lang="ja">
-                <head>
-                <meta charset="UTF-8">
-                <title>${pageTitle}</title>
-                <style>
-                *, *::before, *::after { box-sizing: border-box; }
-                @page {
-                    size: A4 landscape;
-                    margin: 0;
-                }
-                html, body {
-                    margin: 0;
-                    padding: 0;
-                    width: 100%;
-                    height: 100%;
-                }
-                body {
-                    margin: 0;
-                    padding: 40px;
-                    background-color: #525659;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
-                }
-                @media print {
-                    body {
-                    background-color: transparent !important;
-                    padding: 0 !important;
-                    margin: 0 !important;
-                    display: block !important;
-                    width: 100% !important;
-                    height: 100% !important;
-                    overflow: visible !important;
-                    }
-                    .pdf-page {
-                    box-shadow: none !important;
-                    margin: 0 !important;
-                    width: 100% !important;
-                    height: 100% !important;
-                    padding: 15mm !important;
-                    page-break-after: always !important;
-                    break-after: page !important;
-                    page-break-inside: avoid !important;
-                    break-inside: avoid !important;
-                    }
-                    .pdf-page:last-child,
-                    .pdf-page:last-of-type {
-                    page-break-after: avoid !important;
-                    break-after: avoid !important;
-                    }
-                }
-                .pdf-page {
-                    width: 297mm;
-                    height: 210mm;
-                    padding: 15mm;
-                    background-color: #fff;
-                    color: #2b2b2b;
-                    box-sizing: border-box;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-                    -webkit-writing-mode: vertical-rl;
-                    writing-mode: vertical-rl;
-                }
-                .pdf-header {
-                    border-left: 2px solid #669BE1;
-                    padding-left: 15px;
-                    margin-left: 25px;
-                    height: 180mm;
-                }
-                .pdf-title {
-                    font-size: 16pt;
-                    font-weight: bold;
-                    color: #3b74c4;
-                    margin: 0 0 0 10pt;
-                    letter-spacing: 2px;
-                }
-                .pdf-meta {
-                    font-size: 9pt;
-                    color: #444;
-                    display: flex;
-                    flex-direction: column;
-                    line-height: 1.8;
-                    letter-spacing: 1px;
-                    height: 180mm;
-                }
-                .meta-top {
-                    margin-left: 10px;
-                    display: inline-flex;
-                }
-                .meta-top div {
-                    margin-bottom: 15px;
-                }
-                .meta-bottom {
-                    margin-top: auto;
-                    max-height: 130mm;
-                }
-                .meta-bottom div {
-                    text-indent: -4.2em;
-                }
-                .tanka-container {
-                    height: 180mm;
-                    width: auto;
-                    padding-top: 5mm;
-                    margin-right: 50px;
-                }
-                .tanka {
-                    margin-left: 30px;
-                    margin-right: 5px;
-                    font-size: 13pt;
-                    line-height: 2.2;
-                    letter-spacing: 2px;
-                    padding-left: 15px;
-                }
-                .tanka-author {
-                    font-size: 10pt;
-                    color: #333;
-                    margin-top: 20px;
-                    text-align: right;
-                }
-                ruby { ruby-align: center; }
-                rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
-                </style>
-                ${printScript}
-                </head>
-                <body>
-                ${pagesHTML}
-                </body>
-                </html>`;
+        <html lang="ja">
+        <head>
+        <meta charset="UTF-8">
+        <title>${pageTitle}</title>
+        <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            padding: 40px;
+            background-color: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
+        }
+        @media print {
+            html, body {
+                width: 297mm !important;
+                height: 210mm !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: visible !important;
+            }
+            body {
+                display: block !important;
+            }
+            .pdf-page {
+                box-shadow: none !important;
+                margin: 0 !important;
+                width: 297mm !important;
+                height: 210mm !important;
+                padding: 15mm !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .pdf-page:last-child,
+            .pdf-page:last-of-type {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+        }
+        .pdf-page {
+            width: 297mm;
+            height: 210mm;
+            padding: 15mm;
+            background-color: #fff;
+            color: #2b2b2b;
+            box-sizing: border-box;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            -webkit-writing-mode: vertical-rl;
+            writing-mode: vertical-rl;
+
+            overflow: hidden;
+            position: relative;
+
+            margin-bottom: 20px;
+        }
+        .pdf-header {
+            border-left: 2px solid #669BE1;
+            padding-left: 15px;
+            margin-left: 25px;
+            height: 180mm;
+            flex-shrink: 0;
+        }
+        .pdf-title {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #3b74c4;
+            margin: 0 0 0 10pt;
+            letter-spacing: 2px;
+        }
+        .pdf-meta {
+            font-size: 9pt;
+            color: #444;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.8;
+            letter-spacing: 1px;
+            height: 180mm;
+        }
+        .meta-top {
+            margin-left: 10px;
+            display: inline-flex;
+        }
+        .meta-top div {
+            margin-bottom: 15px;
+        }
+        .meta-bottom {
+            margin-top: auto;
+            max-height: 130mm;
+        }
+        .meta-bottom div {
+            text-indent: -4.2em;
+        }
+        .tanka-container {
+            height: 180mm;
+            max-width: 200mm;
+            padding-top: 5mm;
+            margin-right: 30px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+        .tanka {
+            margin-left: clamp(10px, 3em, 45px);
+            margin-right: clamp(10px, 3em, 45px);
+            font-size: 13pt;
+            line-height: 2.2;
+            letter-spacing: 2px;
+            padding-left: 15px;
+            flex-shrink: 0;
+        }
+        .tanka:last-child {
+            margin-left: 0;
+        }
+
+        .tanka:only-child,
+        .tanka:first-child:nth-last-child(2),
+        .tanka:first-child:nth-last-child(2) ~ .tanka,
+        .tanka:first-child:nth-last-child(3),
+        .tanka:first-child:nth-last-child(3) ~ .tanka {
+            margin-left: 80px;
+        }
+
+        .tanka-author {
+            font-size: 10pt;
+            color: #333;
+            margin-top: 20px;
+            text-align: right;
+        }
+        ruby { ruby-align: center; }
+        rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
+        </style>
+        ${printScript}
+        </head>
+        <body>
+        ${pagesHTML}
+        </body>
+        </html>`;
         }
 
         function openInNewWindow(isKaidai, autoPrint = false) {
