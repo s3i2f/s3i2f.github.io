@@ -55,7 +55,7 @@
            overflow: hidden;
        }
 
-       /*NAVIGATION*/
+       /* NAVIGATION */
        nav ul {
            display: table;
            margin: 0 auto;
@@ -123,57 +123,233 @@
            font-size: 15px;
        }
 
-       /*SIDEBAR*/
-       .sidebar {
-           display: flex;
-           position: sticky;
-           top: 20px;
-       }
-
-
-       /*BREADCRUMB*/
-       .breadcrumb {
-           color: #2a2a2a;
-       }
-
-
-       /*FOOTER*/
-       footer {
-           text-align: center;
-       }
-
-       .footer-nav {
-           display: flex;
-           flex-direction: column;
-       }
-
-       .sns-btn {
-           justify-content: center;
-           align-items: center;
-           display: flex;
-           margin-top: 20px;
-           padding-inline-start: 0;
-       }
-
-       .sns-btn li {
+       /* NEWS */
+       #recent-updates ul {
            list-style: none;
-           width: 30px;
-           margin-left: 10px;
+           padding-left: 0;
+       }
+
+       #recent-updates li {
+           margin-bottom: 0.8em;
+           border-bottom: 1px dashed #ccc;
+           padding-bottom: 0.5em;
+       }
+
+       .date {
+           color: #666;
+           font-size: 0.9em;
            margin-right: 10px;
        }
 
-       .sns-btn ul {
-           display: block;
+       .badge {
+           display: inline-block;
+           padding: 2px 6px;
+           font-size: 0.8em;
+           border-radius: 3px;
+           margin-right: 8px;
+           color: #fff;
+       }
+
+       .badge.fixed {
+           background-color: #e74c3c;
+       }
+
+       .badge.news {
+           background-color: #3498db;
+       }
+
+       .badge.category {
+           background-color: #2ecc71;
+       }
+
+       /* TAG LIST */
+       .tag-filter-container {
+           margin-bottom: 20px;
+           padding: 15px;
+           background-color: #f9f9f9;
+           border-radius: 5px;
+       }
+
+       #tag-buttons button {
+           background-color: #fff;
+           border: 1px solid #ddd;
+           padding: 5px 10px;
+           margin: 0 5px 5px 0;
+           cursor: pointer;
+           border-radius: 15px;
+           transition: background-color 0.2s;
+       }
+
+       #tag-buttons button:hover {
+           background-color: #eee;
+       }
+
+       .tag {
+           font-size: 0.8em;
+           color: #888;
+           background-color: #eee;
+           padding: 2px 5px;
+           margin-left: 5px;
+           border-radius: 3px;
+       }
+
+       /*BREADCRUMB*/
+       #breadcrumbs {
+           font-size: 0.9em;
+           margin-bottom: 20px;
+           color: #666;
+       }
+
+       #breadcrumbs a {
+           color: #3498db;
+           text-decoration: none;
+       }
+
+       #breadcrumbs a:hover {
+           text-decoration: underline;
+       }
+
+       /* NEXT/PREV NAV */
+       .next-prev-nav {
+           display: flex;
+           justify-content: space-between;
+           margin-top: 40px;
+           padding-top: 20px;
+           border-top: 1px solid #ddd;
+       }
+
+       .nav-box {
+           width: 48%;
+       }
+
+       #next-article {
+           text-align: right;
+       }
+
+       .next-prev-nav a {
+           display: inline-block;
+           padding: 10px 15px;
+           background-color: #f9f9f9;
+           border-radius: 5px;
+           text-decoration: none;
+           color: #333;
+           transition: background-color 0.3s;
+       }
+
+       .next-prev-nav a:hover {
+           background-color: #eaeaea;
+       }
+
+       /*FOOTER*/
+       .site-footer {
+           background-color: #f1f1f1;
+           color: #333;
+           padding: 50px 20px 20px;
+           margin-top: 80px;
+           border-top: 1px solid #eaeaea;
+           font-family: inherit;
+           /* 既存のフォント設定を継承 */
+       }
+
+       .footer-container {
+           max-width: 900px;
+           margin: 0 auto;
+       }
+
+       /* カテゴリリンクのブロック配置 */
+       .footer-nav-blocks {
+           display: flex;
+           flex-wrap: wrap;
+           gap: 40px;
+           margin-bottom: 40px;
+           justify-content: flex-start;
+       }
+
+       .footer-nav-block {
+           min-width: 140px;
+       }
+
+       .footer-nav-block h4 {
+           font-size: 1rem;
+           font-weight: bold;
+           margin-bottom: 15px;
+           color: #444;
+           letter-spacing: 0.05em;
+       }
+
+       .footer-nav-block ul {
+           list-style: none;
            padding: 0;
            margin: 0;
        }
 
-       .sns-btn img {
-           height: auto;
-           width: 30px;
-           object-fit: cover;
+       .footer-nav-block li {
+           margin-bottom: 10px;
        }
 
+       .footer-nav-block a {
+           text-decoration: none;
+           color: #777;
+           font-size: 0.9rem;
+           transition: color 0.3s ease, opacity 0.3s ease;
+       }
+
+       .footer-nav-block a:hover {
+           color: #111;
+           text-decoration: underline;
+       }
+
+       /* SNSアイコンとコピーライトのエリア */
+       .footer-bottom {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           border-top: 1px solid #eaeaea;
+           padding-top: 25px;
+           gap: 15px;
+       }
+
+       .footer-sns {
+           display: flex;
+           gap: 20px;
+       }
+
+       .footer-sns a {
+           display: inline-block;
+           transition: transform 0.2s ease, opacity 0.2s ease;
+       }
+
+       .footer-sns a:hover {
+           transform: translateY(-2px);
+           /* ホバー時に少し浮き上がるエフェクト */
+           opacity: 0.7;
+       }
+
+       .footer-sns img {
+           width: 24px;
+           height: 24px;
+           object-fit: contain;
+       }
+
+       .copyright {
+           font-size: 0.8rem;
+           color: #999;
+           margin: 0;
+           letter-spacing: 0.05em;
+       }
+
+       /* 画面幅が広い場合（PC・タブレット）の調整 */
+       @media (min-width: 768px) {
+           .footer-nav-blocks {
+               justify-content: space-between;
+           }
+
+           .footer-bottom {
+               flex-direction: row-reverse;
+               /* SNSを右、コピーライトを左に配置 */
+               justify-content: space-between;
+           }
+       }
 
        /*ISSHU*/
        .isshu-wrap {

@@ -73,6 +73,39 @@
         <!-- <h2>About</h2>
         <p>2003年神戸市生。2025年秋作歌開始。神戸大学短歌会所属。</p> -->
 
+        <section id="recent-updates">
+            <h2>お知らせ・最近の更新</h2>
+            <ul id="updates-list">
+                <!-- JSで自動生成されます -->
+            </ul>
+        </section>
+        <script src="./site-data.js"></script>
+        <script>
+            // 固定表示のお知らせを抽出
+            const fixedNews = siteData.news.filter(item => item.isFixed);
+            // 固定以外のお知らせ
+            const normalNews = siteData.news.filter(item => !item.isFixed);
+
+            // お知らせと記事データを結合し、日付順（降順）にソート
+            const combinedUpdates = [...normalNews, ...siteData.articles].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // 最新5件を抽出
+            const recentUpdates = combinedUpdates.slice(0, 5);
+
+            // 固定表示と最新5件を合わせてリスト化
+            const displayList = [...fixedNews, ...recentUpdates];
+
+            const listElement = document.getElementById('updates-list');
+            displayList.forEach(item => {
+                const li = document.createElement('li');
+                const isFixedMark = item.isFixed ? '<span class="badge fixed">固定</span>' : '';
+                const typeMark = item.category ? `<span class="badge category">${item.category}</span>` : '<span class="badge news">お知らせ</span>';
+
+                li.innerHTML = `<span class="date">${item.date}</span> ${isFixedMark} ${typeMark} <a href="${item.url}">${item.title}</a>`;
+                listElement.appendChild(li);
+            });
+        </script>
+
         <h2><a href="/work/">Work</a></h2>
         <h3>短歌作品</h3>
         <ul>
@@ -103,26 +136,51 @@
 
 
 
+    <footer class="site-footer">
+        <div class="footer-container">
+            <!-- カテゴリリンク群 -->
+            <div class="footer-nav-blocks">
+                <div class="footer-nav-block">
+                    <h4>Main</h4>
+                    <ul>
+                        <li><a href="/">ホーム</a></li>
+                        <li><a href="/about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Essay</h4>
+                    <ul>
+                        <li><a href="/essay/note/index.html">雑記</a></li>
+                        <li><a href="/essay/sampo/index.html">散歩日記</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Review</h4>
+                    <ul>
+                        <li><a href="/review/index.html">評</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Work</h4>
+                    <ul>
+                        <li><a href="/work/tanka/index.html">短歌</a></li>
+                    </ul>
+                </div>
+            </div>
 
-    <footer>
-        <div class="footer-nav">
-            <nav>
-                <a href="about.html">about</a>
-                <a href="work/">work</a>
-                <a href="essay/">essay</a>
-                <a href="review/">review</a>
-                <a href="">contact</a>
-            </nav>
+            <!-- フッター下部（SNSアイコンとコピーライト） -->
+            <div class="footer-bottom">
+                <div class="footer-sns">
+                    <a href="https://x.com/s3i2f" target="_blank" rel="noopener noreferrer">
+                        <img src="common/logo_x.png" alt="X (Twitter)">
+                    </a>
+                    <a href="https://instagram.com/s3i2f_" target="_blank" rel="noopener noreferrer">
+                        <img src="common/logo_instagram.png" alt="Instagram">
+                    </a>
+                </div>
+                <p class="copyright">&copy; 2026 Seiji Fujimura. All rights reserved.</p>
+            </div>
         </div>
-        <div class="fotter-sns">
-            <ul class="sns-btn">
-                <li><a href="https://x.com/s3i2f" target="_blank" rel="noopener"><img src="common/logo_x.png"
-                            alt="x-logo"></a></li>
-                <li><a href="https://instagram.com/s3i2f_" target="_blank" rel="noopener"><img
-                            src="common/logo_instagram.png" alt="instagram-logo"></a></li>
-            </ul>
-        </div>
-        <p>&copy; 2026 Seiji Fujimura</p>
     </footer>
 
 </body>
