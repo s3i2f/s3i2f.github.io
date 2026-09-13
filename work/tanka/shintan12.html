@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../style.css">
-
-
-    <title>沈黙（抄） - 〈サイトの名前〉</title>
+    <link rel="javascript" href="../../site-data.js" <title>沈黙（抄） - 〈サイトの名前〉</title>
 </head>
 
 <header>
@@ -28,6 +26,37 @@
 </header>
 
 <body>
+    <nav id="breadcrumbs" aria-label="breadcrumb">
+        <!-- JSで生成 -->
+    </nav>
+
+    <script>
+        // URLのパスからパンくずを自動生成
+        const pathArray = window.location.pathname.split('/').filter(p => p !== "" && p !== "index.html");
+        const breadcrumbs = document.getElementById('breadcrumbs');
+
+        let html = '<a href="/">ホーム</a>';
+        let currentPath = '';
+
+        // パス名と表示名のマッピング表（必要に応じて追加）
+        const nameMap = { "essay": "エッセイ", "note": "ノート", "sampo": "散歩", "review": "レビュー", "work": "作品", "tanka": "短歌" };
+
+        pathArray.forEach((path, index) => {
+            currentPath += `/${path}`;
+            const displayName = nameMap[path] || path;
+
+            html += ' > ';
+            if (index === pathArray.length - 1) {
+                // 現在のページ（リンクにしない）
+                html += `<span>${document.title}</span>`;
+            } else {
+                // 途中のディレクトリ
+                html += `<a href="${currentPath}/">${displayName}</a>`;
+            }
+        });
+
+        breadcrumbs.innerHTML = html;
+    </script>
 
     <main>
         <h1>沈黙（抄）</h1>
@@ -56,27 +85,148 @@
         <p>沈潜の眠りに重く凝りたる脳室泳ぐ真夜中のうを</p>
     </main>
 
+
+    <nav class="next-prev-nav">
+        <div id="prev-article" class="nav-box"><!-- 前の記事 --></div>
+        <div id="next-article" class="nav-box"><!-- 次の記事 --></div>
+    </nav>
+
+    <script src="../../site-data.js"></script>
+    <script>
+        // 現在のページのURLを取得
+        const currentUrl = window.location.pathname;
+
+        // 現在のカテゴリのみに絞り込む（カテゴリ内での前後移動にするため）
+        // ※パス名からカテゴリを推測するか、手動で指定します
+        const categoryMatch = currentUrl.match(/\/([^\/]+)\/[^\/]+\.html$/);
+        const currentCategory = categoryMatch ? categoryMatch[1] : null;
+
+        let targetArticles = siteData.articles;
+        if (currentCategory) {
+            targetArticles = targetArticles.filter(a => a.category === currentCategory);
+        }
+
+        // 配列は「新しい順」になっている前提
+        const currentIndex = targetArticles.findIndex(a => currentUrl.includes(a.url));
+
+        const prevBox = document.getElementById('prev-article');
+        const nextBox = document.getElementById('next-article');
+
+        if (currentIndex !== -1) {
+            // 古い記事（前の記事）＝配列のインデックスが大きい方
+            if (currentIndex < targetArticles.length - 1) {
+                const prev = targetArticles[currentIndex + 1];
+                prevBox.innerHTML = `<a href="${prev.url}">« 前の記事：${prev.title}</a>`;
+            }
+            // 新しい記事（次の記事）＝配列のインデックスが小さい方
+            if (currentIndex > 0) {
+                const next = targetArticles[currentIndex - 1];
+                nextBox.innerHTML = `<a href="${next.url}">次の記事：${next.title} »</a>`;
+            }
+        }
+    </script>
+
+    <div class="tag-filter-container">
+        <span>タグで絞り込む:</span>
+        <div id="tag-buttons">
+            <!-- JSでタグボタンが自動生成されます -->
+        </div>
+    </div>
+
+    <ul id="article-list" class="category-list">
+        <!-- JSで対象カテゴリの記事一覧が自動生成されます -->
+    </ul>
+
+    <script src="../../site-data.js"></script>
+    <script>
+        const currentCategory = "note"; // ページに合わせて変更（sampo, tankaなど）
+        let categoryArticles = siteData.articles.filter(article => article.category === currentCategory);
+
+        // 存在するすべてのタグを抽出
+        const allTags = [...new Set(categoryArticles.flatMap(article => article.tags || []))];
+
+        const tagContainer = document.getElementById('tag-buttons');
+        const listContainer = document.getElementById('article-list');
+
+        // 記事を描画する関数
+        function renderArticles(articles) {
+            listContainer.innerHTML = '';
+            articles.forEach(item => {
+                const tagsHtml = (item.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('');
+                listContainer.innerHTML += `<li><span class="date">${item.date}</span> <a href="${item.url}">${item.title}</a> ${tagsHtml}</li>`;
+            });
+        }
+
+        // タグボタンを描画する関数
+        tagContainer.innerHTML = '<button onclick="filterByTag(\'all\')">すべて</button>';
+        allTags.forEach(tag => {
+            tagContainer.innerHTML += `<button onclick="filterByTag('${tag}')">${tag}</button>`;
+        });
+
+        // 絞り込み実行
+        window.filterByTag = function (tag) {
+            if (tag === 'all') {
+                renderArticles(categoryArticles);
+            } else {
+                const filtered = categoryArticles.filter(article => (article.tags || []).includes(tag));
+                renderArticles(filtered);
+            }
+        };
+
+        // 初期表示
+        renderArticles(categoryArticles);
+    </script>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <!-- カテゴリリンク群 -->
+            <div class="footer-nav-blocks">
+                <div class="footer-nav-block">
+                    <h4>Main</h4>
+                    <ul>
+                        <li><a href="/">ホーム</a></li>
+                        <li><a href="/about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Essay</h4>
+                    <ul>
+                        <li><a href="/essay/note/index.html">雑記</a></li>
+                        <li><a href="/essay/sampo/index.html">散歩日記</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Review</h4>
+                    <ul>
+                        <li><a href="/review/index.html">評</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Work</h4>
+                    <ul>
+                        <li><a href="/work/tanka/index.html">短歌</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- フッター下部（SNSアイコンとコピーライト） -->
+            <div class="footer-bottom">
+                <div class="footer-sns">
+                    <a href="https://x.com/s3i2f" target="_blank" rel="noopener noreferrer">
+                        <img src="/common/logo_x.png" alt="X (Twitter)">
+                    </a>
+                    <a href="https://instagram.com/s3i2f_" target="_blank" rel="noopener noreferrer">
+                        <img src="/common/logo_instagram.png" alt="Instagram">
+                    </a>
+                </div>
+                <p class="copyright">&copy; 2026 Seiji Fujimura. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
 </body>
 
-<footer>
-    <div class="footer-nav">
-        <nav>
-            <a href="about.html">about</a>
-            <a href="work/">work</a>
-            <a href="essay/">essay</a>
-            <a href="review/">review</a>
-            <a href="">contact</a>
-        </nav>
-    </div>
-    <div class="fotter-sns">
-        <ul class="sns-btn">
-            <li><a href="https://x.com/s3i2f" target="_blank" rel="noopener"><img src="../../common/logo_x.png"
-                        alt="x-logo"></a></li>
-            <li><a href="https://instagram.com/s3i2f_" target="_blank" rel="noopener"><img
-                        src="../../common/logo_instagram.png" alt="instagram-logo"></a></li>
-        </ul>
-    </div>
-    <p>&copy; 2026 Seiji Fujimura</p>
-</footer>
+
 
 </html>
