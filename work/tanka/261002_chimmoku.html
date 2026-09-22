@@ -38,9 +38,7 @@
     </header>
 
 
-    <nav id="breadcrumbs" aria-label="breadcrumb">
-        <!-- JSで生成 -->
-    </nav>
+    <nav id="breadcrumbs" aria-label="breadcrumb"></nav>
 
     <script>
         // URLのパスからパンくずを自動生成
@@ -50,8 +48,8 @@
         let html = '<a href="/">ホーム</a>';
         let currentPath = '';
 
-        // パス名と表示名のマッピング表（必要に応じて追加）
-        const nameMap = { "essay": "エッセイ", "note": "ノート", "sampo": "散歩", "review": "レビュー", "work": "作品", "tanka": "短歌" };
+        // パス名と表示名のマッピング
+        const nameMap = { "essay": "essay", "note": "雑記", "sampo": "散歩日記", "review": "review", "work": "作品", "tanka": "短歌" };
 
         pathArray.forEach((path, index) => {
             currentPath += `/${path}`;
