@@ -57,7 +57,9 @@
            overflow: hidden;
        }
 
-       /* TOP NAVIGATION */
+       /* ----------------------------------------------------
+            TOP NAVIGATION
+       ---------------------------------------------------- */
        :root {
            --nav-bg: #f1f1f1;
            /* ナビゲーションの背景色 */
@@ -76,7 +78,7 @@
            padding: 0 20px;
            display: flex;
            justify-content: center;
-           /* タブを中央揃え（左揃えなら flex-start） */
+           font-family: 'Times New Roman', Times, serif;
        }
 
        .nav-list {
@@ -143,7 +145,7 @@
 
 
        /* ----------------------------------------------------
-       SIDEBAR 
+            SIDEBAR 
        ---------------------------------------------------- */
        .nav-toggle {
            display: none;
@@ -216,6 +218,7 @@
        }
 
        .sidebar h2 {
+           font-family: 'Times New Roman', Times, serif;
            font-size: 1.5rem;
            margin-bottom: 30px;
            color: var(--text-color);
@@ -224,6 +227,7 @@
        }
 
        .sidebar ul {
+           font-family: 'Times New Roman', Times, serif;
            list-style: none;
        }
 
@@ -258,7 +262,7 @@
 
 
        /* ----------------------------------------------------
-       INTRO
+             INTRO
        ---------------------------------------------------- */
        .intro {
            display: flex;
@@ -343,7 +347,7 @@
        .badge.pin-badge {
            display: inline-flex;
            align-items: center;
-           justify-content: flex-end;
+           justify-content: flex-start;
            width: 70px;
            margin-right: 8px;
            background-color: #edf2f7;
@@ -380,24 +384,48 @@
 
        /* TAG LIST */
        .tag-filter-container {
-           margin-bottom: 20px;
-           padding: 15px;
-           background-color: #f9f9f9;
-           border-radius: 5px;
+           margin-bottom: 1.5rem;
+           display: flex;
+           align-items: center;
+           gap: 10px;
+           flex-wrap: wrap;
        }
 
-       #tag-buttons button {
-           background-color: #fff;
-           border: 1px solid #ddd;
-           padding: 5px 10px;
-           margin: 0 5px 5px 0;
+       .tag-buttons button {
+           background-color: #f0f0f0;
+           border: 1px solid #ccc;
+           border-radius: 4px;
+           padding: 4px 10px;
+           font-size: 0.85rem;
            cursor: pointer;
-           border-radius: 15px;
-           transition: background-color 0.2s;
+           margin-right: 5px;
+           transition: all 0.2s ease;
        }
 
-       #tag-buttons button:hover {
-           background-color: #eee;
+       .tag-buttons button:hover {
+           background-color: #e2e8f0;
+       }
+
+       /* 選択中のタグボタン */
+       .tag-buttons button.active {
+           background-color: #4a5568;
+           color: #ffffff;
+           border-color: #4a5568;
+       }
+
+       /* 記事一覧内のタグ表示 */
+       .category-list .tags-wrapper {
+           display: inline-block;
+           margin-left: 10px;
+       }
+
+       .category-list .tag {
+           font-size: 0.75rem;
+           color: #666;
+           background-color: #edf2f7;
+           padding: 2px 6px;
+           border-radius: 3px;
+           margin-right: 4px;
        }
 
        .tag {
@@ -412,7 +440,7 @@
        /*BREADCRUMB*/
        #breadcrumbs {
            font-size: 0.9em;
-           margin-bottom: 20px;
+           margin-top: 20px;
            color: #666;
        }
 
@@ -456,7 +484,9 @@
            background-color: #eaeaea;
        }
 
-       /*FOOTER*/
+       /*
+       FOOTER
+       */
        .site-footer {
            background-color: #f1f1f1;
            color: #333;
@@ -486,6 +516,7 @@
        }
 
        .footer-nav-block h4 {
+           font-family: 'Times New Roman', Times, serif;
            font-size: 1rem;
            font-weight: bold;
            margin-bottom: 15px;

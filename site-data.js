@@ -14,14 +14,14 @@ const siteData = {
             date: "2026-10-2",
             title: "城跡にて",
             url: "/work/tanka/261002_shiroatonite",
-            category: "短歌",
+            category: "tanka",
             tags: ["短歌作品"]
         },
         {
             date: "2026-10-2",
             title: "沈黙",
             url: "/work/tanka/261002_chimmoku",
-            category: "短歌",
+            category: "tanka",
             tags: ["短歌作品"]
         },
         {

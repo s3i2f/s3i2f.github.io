@@ -13,7 +13,7 @@
     <meta name="twitter:image" content="https://s3i2f.github.io/image.png">
 
     <link rel="icon" href="common/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 
     <title>Work | Seiji Fujimura</title>
 </head>
@@ -55,35 +55,50 @@
                 </li>
             </ul>
         </nav>
+
+        <!-- SIDEBAR -->
+        <input type="checkbox" id="nav-toggle" class="nav-toggle">
+        <label for="nav-toggle" class="nav-toggle-label">
+            <span></span>
+        </label>
+
+        <nav class="sidebar">
+            <div class="sidebar-content">
+                <h2></h2>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about.html">About</a></li>
+                    <li><a href="/work/">Work</a></li>
+                    <li><a href="/essay/">Essay</a></li>
+                    <li><a href="/review/">Review</a></li>
+                </ul>
+            </div>
+        </nav>
+
     </header>
-
-    <!-- SIDEBAR -->
-    <input type="checkbox" id="nav-toggle" class="nav-toggle">
-    <label for="nav-toggle" class="nav-toggle-label">
-        <span></span>
-    </label>
-
-    <nav class="sidebar">
-        <div class="sidebar-content">
-            <h2></h2>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/about.html">About</a></li>
-                <li><a href="/work/">Work</a></li>
-                <li><a href="/essay/">Essay</a></li>
-                <li><a href="/review/">Review</a></li>
-            </ul>
-        </div>
-    </nav>
-
 
     <main>
         <h2>短歌作品</h2>
 
+        <!-- タグフィルター表示領域 -->
+        <div class="tag-filter-container">
+            <span>タグで絞り込む:</span>
+            <div id="tag-buttons" class="tag-buttons"></div>
+        </div>
+
+        <!-- 記事一覧出力領域 -->
+        <ul id="article-list" class="category-list"></ul>
 
     </main>
 
-
+    <script src="/site-data.js"></script>
+    <script src="/js/category-filter.js"></script>
+    <script>
+        // DOM構築後に指定カテゴリ名で一覧とフィルターを初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            initCategoryPage("tanka"); // 短歌一覧なら "tanka"、散歩日記なら "sampo"
+        });
+    </script>
 
     <footer class="site-footer">
         <div class="footer-container">
