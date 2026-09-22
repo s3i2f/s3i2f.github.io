@@ -12,15 +12,13 @@
     <meta name="twitter:description" content="藤村誠二のサイト">
     <meta name="twitter:image" content="https://s3i2f.github.io/image.png">
 
-
     <link rel="icon" href="common/favicon.ico" type="image/x-icon">
-
-
     <link rel="stylesheet" href="style.css">
-    <title>〈サイトの名前〉 | Seiji Fujimura</title>
+
+    <title>Home | Seiji Fujimura</title>
 </head>
 
-<!-- Google tag (gtag.js)
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5JC403ZDDF"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
@@ -28,7 +26,9 @@
     gtag('js', new Date());
 
     gtag('config', 'G-5JC403ZDDF');
-</script> -->
+</script>
+
+
 
 <body>
 
@@ -68,11 +68,11 @@
         <div class="sidebar-content">
             <h2></h2>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Work</a></li>
-                <li><a href="#">Essay</a></li>
-                <li><a href="#">Review</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/work/">Work</a></li>
+                <li><a href="/essay/">Essay</a></li>
+                <li><a href="/review/">Review</a></li>
             </ul>
         </div>
     </nav>
@@ -96,43 +96,86 @@
 
 
         <!---CONTENT--->
-        <!-- <h2>About</h2>
-        <p>2003年神戸市生。2025年秋作歌開始。神戸大学短歌会所属。</p> -->
-
         <section id="recent-updates">
-            <h2>お知らせ・最近の更新</h2>
-            <ul id="updates-list">
-                <!-- JSで自動生成されます -->
-            </ul>
+            <h2>お知らせ</h2>
+            <ul id="news-list"></ul>
+
+            <h2>更新情報</h2>
+            <ul id="articles-list"></ul>
         </section>
+
+
         <script src="./site-data.js"></script>
         <script>
-            // 固定表示のお知らせを抽出
-            const fixedNews = siteData.news.filter(item => item.isFixed);
-            // 固定以外のお知らせ
-            const normalNews = siteData.news.filter(item => !item.isFixed);
+            const pinIconSvg = `
+            <svg class="pin-icon" viewBox="0 0 24 24" width="14" height="14" fill="#718096" aria-label="固定">
+                <path d="M16 4v2l-1 1v4l3 3v2h-6v6l-1 1-1-1v-6H5v-2l3-3V7L7 6V4h9z"/>
+            </svg>
+        `;
 
-            // お知らせと記事データを結合し、日付順（降順）にソート
-            const combinedUpdates = [...normalNews, ...siteData.articles].sort((a, b) => new Date(b.date) - new Date(a.date));
+            // --------------------------------------------------
+            // 1. お知らせ (news) の処理
+            // --------------------------------------------------
+            const fixedNews = siteData.news.filter(item => item.isFixed)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            const normalNews = siteData.news.filter(item => !item.isFixed)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            // 最新5件を抽出
-            const recentUpdates = combinedUpdates.slice(0, 5);
+            const newsDisplayList = [...fixedNews, ...normalNews];
 
-            // 固定表示と最新5件を合わせてリスト化
-            const displayList = [...fixedNews, ...recentUpdates];
-
-            const listElement = document.getElementById('updates-list');
-            displayList.forEach(item => {
+            const newsListElement = document.getElementById('news-list');
+            newsDisplayList.forEach(item => {
                 const li = document.createElement('li');
-                const isFixedMark = item.isFixed ? '<span class="badge fixed">固定</span>' : '';
-                const typeMark = item.category ? `<span class="badge category">${item.category}</span>` : '<span class="badge news">お知らせ</span>';
 
-                li.innerHTML = `<span class="date">${item.date}</span> ${isFixedMark} ${typeMark} <a href="${item.url}">${item.title}</a>`;
-                listElement.appendChild(li);
+                const pinMark = item.isFixed ? `<span class="badge pin-badge" title="固定記事">${pinIconSvg}</span>` : '';
+
+                // URLが存在する場合は <a> タグ、存在しない場合は <span> タグで出力
+                let titleElementHtml = '';
+                if (item.url && item.url.trim() !== '') {
+                    titleElementHtml = `<a href="${item.url}" class="update-link">${item.title}</a>`;
+                } else {
+                    titleElementHtml = `<span class="update-text">${item.title}</span>`;
+                }
+
+                li.innerHTML = `<span class="date">${item.date}</span> ${pinMark} ${titleElementHtml}`;
+                newsListElement.appendChild(li);
+
+                // プレビュー機能（descriptionがある場合）のイベントを設定
+                const targetElement = li.querySelector('.update-link, .update-text');
+                if (targetElement && typeof attachPreviewEvents === 'function') {
+                    attachPreviewEvents(targetElement, item.description);
+                }
+            });
+
+            // --------------------------------------------------
+            // 2. その他の更新情報 (articles) の処理
+            // --------------------------------------------------
+            const sortedArticles = [...siteData.articles].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const recentArticles = sortedArticles.slice(0, 5);
+
+            const articlesListElement = document.getElementById('articles-list');
+            recentArticles.forEach(item => {
+                const li = document.createElement('li');
+                const typeMark = item.category ? `<span class="badge category">${item.category}</span>` : '';
+
+                // 同様にURLの有無をチェック
+                let titleElementHtml = '';
+                if (item.url && item.url.trim() !== '') {
+                    titleElementHtml = `<a href="${item.url}" class="update-link">${item.title}</a>`;
+                } else {
+                    titleElementHtml = `<span class="update-text">${item.title}</span>`;
+                }
+
+                li.innerHTML = `<span class="date">${item.date}</span> ${typeMark} ${titleElementHtml}`;
+                articlesListElement.appendChild(li);
+
+                // プレビュー機能のイベント設定
+                const targetElement = li.querySelector('.update-link, .update-text');
+                if (targetElement && typeof attachPreviewEvents === 'function') {
+                    attachPreviewEvents(targetElement, item.description);
+                }
             });
         </script>
-
-
 
     </main>
 

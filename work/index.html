@@ -2,42 +2,135 @@
 <html lang="ja">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="" content="藤村誠二">
 
+    <!--twitter-->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Seiji Fujimura / 藤村誠二">
+    <meta name="twitter:description" content="藤村誠二のサイト">
+    <meta name="twitter:image" content="https://s3i2f.github.io/image.png">
+
+    <link rel="icon" href="common/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Work | Seiji Fujimura</title>
 </head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JC403ZDDF"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-5JC403ZDDF');
+</script>
 
 
 <body>
 
     <header>
-
+        <div class="title">
+            <h1>藤村誠二 / Seiji Fujimura</h1>
+        </div>
+        <!---TOP NAVIGATION--->
+        <nav class="top-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about.html" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/work/" class="nav-link active">Work</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/essay/" class="nav-link">Essay</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/review/" class="nav-link">Review</a>
+                </li>
+            </ul>
+        </nav>
     </header>
+
+    <!-- SIDEBAR -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label for="nav-toggle" class="nav-toggle-label">
+        <span></span>
+    </label>
+
+    <nav class="sidebar">
+        <div class="sidebar-content">
+            <h2></h2>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/work/">Work</a></li>
+                <li><a href="/essay/">Essay</a></li>
+                <li><a href="/review/">Review</a></li>
+            </ul>
+        </div>
+    </nav>
 
 
     <main>
 
-
-        <h1>作品</h1>
-        上が最新のもの。
-
-        <h2>短歌作品</h2>
-
-        <ul>
-            <li>沈黙（抄）</li>
-        </ul>
-
-        <h2>詩作品</h2>
-
-        <ul>
-            <li></li>
-        </ul>
 
 
     </main>
 
 
 
-    <footer>
+    <footer class="site-footer">
+        <div class="footer-container">
+            <!-- カテゴリリンク群 -->
+            <div class="footer-nav-blocks">
+                <div class="footer-nav-block">
+                    <h4></h4>
+                    <ul>
+                        <li><a href="/">ホーム</a></li>
+                        <li><a href="/about.html">プロフィール</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Work</h4>
+                    <ul>
+                        <li><a href="/work/tanka/index.html">短歌</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Essay</h4>
+                    <ul>
+                        <li><a href="/essay/note/index.html">雑記</a></li>
+                        <li><a href="/essay/sampo/index.html">散歩日記</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Review</h4>
+                    <ul>
+                        <li><a href="/review/index.html">一首評</a></li>
+                        <li><a href="/review/index.html">歌集・歌書評</a></li>
+                    </ul>
+                </div>
+            </div>
 
+            <!-- フッター下部（SNSアイコンとコピーライト） -->
+            <div class="footer-bottom">
+                <div class="footer-sns">
+                    <a href="https://x.com/s3i2f" target="_blank" rel="noopener noreferrer">
+                        <img src="common/logo_x.png" alt="X (Twitter)">
+                    </a>
+                    <a href="https://instagram.com/s3i2f_" target="_blank" rel="noopener noreferrer">
+                        <img src="common/logo_instagram.png" alt="Instagram">
+                    </a>
+                </div>
+                <p class="copyright">&copy; 2026 Seiji Fujimura. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
 
 </body>

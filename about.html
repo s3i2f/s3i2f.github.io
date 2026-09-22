@@ -10,27 +10,78 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Seiji Fujimura / 藤村誠二">
     <meta name="twitter:description" content="藤村誠二のサイト">
-
     <meta name="twitter:image" content="https://s3i2f.github.io/image.png">
-    <!-- <link rel="icon" href="/favicon.ico" type="image/x-icon"> -->
-    <!-- <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"> -->
 
+    <link rel="icon" href="common/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
-    <title>プロフィール -〈サイトの名前〉</title>
+
+    <title>About | Seiji Fujimura</title>
 </head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JC403ZDDF"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-5JC403ZDDF');
+</script>
 
 
 <body>
 
+    <header>
+        <div class="title">
+            <h1>藤村誠二 / Seiji Fujimura</h1>
+        </div>
+        <!---TOP NAVIGATION--->
+        <nav class="top-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about.html" class="nav-link active">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/work/" class="nav-link">Work</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/essay/" class="nav-link">Essay</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/review/" class="nav-link">Review</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
 
+    <!-- SIDEBAR -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label for="nav-toggle" class="nav-toggle-label">
+        <span></span>
+    </label>
+
+    <nav class="sidebar">
+        <div class="sidebar-content">
+            <h2></h2>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/work/">Work</a></li>
+                <li><a href="/essay/">Essay</a></li>
+                <li><a href="/review/">Review</a></li>
+            </ul>
+        </div>
+    </nav>
 
 
     <main>
 
-        <div class="portrait">
+        <!-- <div class="portrait">
             <img src="common/fujimura-portrait_transparent.png" alt="portrait" width="150pt">
-        </div>
+        </div> -->
 
         <h1>プロフィール</h1>
 
@@ -53,9 +104,6 @@
 
     </main>
 
-    <aside class="sidebar">
-        <div class="sidebar-cont"></div>
-    </aside>
 
 
     <footer class="site-footer">
@@ -63,10 +111,16 @@
             <!-- カテゴリリンク群 -->
             <div class="footer-nav-blocks">
                 <div class="footer-nav-block">
-                    <h4>Main</h4>
+                    <h4></h4>
                     <ul>
                         <li><a href="/">ホーム</a></li>
-                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/about.html">プロフィール</a></li>
+                    </ul>
+                </div>
+                <div class="footer-nav-block">
+                    <h4>Work</h4>
+                    <ul>
+                        <li><a href="/work/tanka/index.html">短歌</a></li>
                     </ul>
                 </div>
                 <div class="footer-nav-block">
@@ -79,13 +133,8 @@
                 <div class="footer-nav-block">
                     <h4>Review</h4>
                     <ul>
-                        <li><a href="/review/index.html">評</a></li>
-                    </ul>
-                </div>
-                <div class="footer-nav-block">
-                    <h4>Work</h4>
-                    <ul>
-                        <li><a href="/work/tanka/index.html">短歌</a></li>
+                        <li><a href="/review/index.html">一首評</a></li>
+                        <li><a href="/review/index.html">歌集・歌書評</a></li>
                     </ul>
                 </div>
             </div>

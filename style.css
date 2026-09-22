@@ -47,7 +47,9 @@
            text-decoration: underline;
        }
 
-       /*TITLE*/
+       /* ----------------------------------------------------
+            TITLE
+       ---------------------------------------------------- */
        .title {
            border-bottom: 2px solid #2a2a2a;
            padding-bottom: 0.8rem;
@@ -140,7 +142,9 @@
        }
 
 
-       /* SIDEBAR */
+       /* ----------------------------------------------------
+       SIDEBAR 
+       ---------------------------------------------------- */
        .nav-toggle {
            display: none;
        }
@@ -253,7 +257,9 @@
        }
 
 
-       /*INTRO*/
+       /* ----------------------------------------------------
+       INTRO
+       ---------------------------------------------------- */
        .intro {
            display: flex;
            gap: 1.5rem;
@@ -299,7 +305,8 @@
            padding-bottom: 0.5em;
            /* 複数行の場合のインデント */
            display: flex;
-           align-items: flex-start;
+           align-items: center;
+           /* align-items: flex-start; */
        }
 
        .date {
@@ -314,10 +321,15 @@
        }
 
        .badge {
-           display: inline-block;
+           display: inline-flex;
+           justify-content: flex-start;
+           align-items: center;
+           width: 70px;
+           flex-shrink: 0;
            font-size: 0.9em;
            margin-right: 8px;
            color: #333;
+           white-space: nowrap;
        }
 
        .badge::before {
@@ -326,6 +338,44 @@
 
        .badge::after {
            content: "]";
+       }
+
+       .badge.pin-badge {
+           display: inline-flex;
+           align-items: center;
+           justify-content: flex-end;
+           width: 70px;
+           margin-right: 8px;
+           background-color: #edf2f7;
+           /* 薄いグレー背景 */
+           border-radius: 4px;
+           background: none;
+       }
+
+       .badge-empty {
+           display: inline-block;
+           width: 65px;
+           flex-shrink: 0;
+           margin-right: 12px;
+       }
+
+       .badge.pin-badge::before,
+       .badge.pin-badge::after {
+           content: "";
+           /* ピンバッジの場合はカッコを表示しない */
+       }
+
+       .pin-icon {
+           vertical-align: middle;
+       }
+
+       .update-link,
+       .update-text {
+           flex-grow: 1;
+           overflow: hidden;
+           text-overflow: ellipsis;
+           /* 長いタイトルを「...」で省略したい場合に有効 */
+           white-space: nowrap;
        }
 
        /* TAG LIST */
