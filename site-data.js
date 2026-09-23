@@ -13,14 +13,14 @@ const siteData = {
         {
             date: "2026-10-2",
             title: "城跡にて",
-            url: "/work/tanka/261002_shiroatonite",
+            url: "/work/tanka/261002_shiroatonite.html",
             category: "tanka",
             tags: ["短歌作品"]
         },
         {
             date: "2026-10-2",
             title: "沈黙",
-            url: "/work/tanka/261002_chimmoku",
+            url: "/work/tanka/261002_chimmoku.html",
             category: "tanka",
             tags: ["短歌作品"]
         },
@@ -34,14 +34,14 @@ const siteData = {
         {
             date: "2026-9-17",
             title: "パフェ歌会",
-            url: "/essay/note/260917_stir",
+            url: "/essay/note/260917_stir.html",
             category: "note",
             tags: ["歌会", "短歌作品"]
         },
         {
             date: "2026-9-6",
             title: "第三回大学短歌トーナメントin関西雑感",
-            url: "/essay/note/260906_tournament",
+            url: "/essay/note/260906_tournament.html",
             category: "note",
             tags: ["短歌作品"]
         },
