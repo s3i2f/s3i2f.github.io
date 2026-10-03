@@ -297,7 +297,9 @@
            font-size: 15px;
        }
 
-       /* NEWS */
+       /* -----------------------------------------
+            NEWS
+       ----------------------------------------- */
        #recent-updates ul {
            list-style: none;
            padding-left: 0;
@@ -382,7 +384,9 @@
            white-space: nowrap;
        }
 
-       /* TAG LIST */
+       /* ---------------------------------------
+            TAG LIST
+        ----------------------------------------- */
        .tag-filter-container {
            margin-bottom: 1.5rem;
            display: flex;
@@ -437,7 +441,9 @@
            border-radius: 3px;
        }
 
-       /*BREADCRUMB*/
+       /* -------------------------------------------
+            BREADCRUMB
+       --------------------------------------------- */
        #breadcrumbs {
            font-size: 0.9em;
            margin-top: 20px;
@@ -453,7 +459,9 @@
            text-decoration: underline;
        }
 
-       /* NEXT/PREV NAV */
+       /* ----------------------------------------------
+            NEXT/PREV NAV
+       ---------------------------------------------- */
        .next-prev-nav {
            display: flex;
            justify-content: space-between;
@@ -484,9 +492,9 @@
            background-color: #eaeaea;
        }
 
-       /*
-       FOOTER
-       */
+       /* ------------------------------------------
+             FOOTER
+      ------------------------------------------- */
        .site-footer {
            background-color: #f1f1f1;
            color: #333;
@@ -568,7 +576,6 @@
 
        .footer-sns a:hover {
            transform: translateY(-2px);
-           /* ホバー時に少し浮き上がるエフェクト */
            opacity: 0.7;
        }
 
@@ -585,7 +592,7 @@
            letter-spacing: 0.05em;
        }
 
-       /* 画面幅が広い場合（PC・タブレット）の調整 */
+       /* レスポンシブ対応 */
        @media (min-width: 768px) {
            .footer-nav-blocks {
                justify-content: space-between;
@@ -598,7 +605,34 @@
            }
        }
 
-       /*ISSHU*/
+       /* ----------------------------------------
+            about-list/personal-history
+       ----------------------------------------- */
+       /* レスポンシブ対応 */
+       @media (min-width: 768px) {
+           .about-list {
+               display: flex;
+           }
+
+           .about-list dt {
+               width: 60px;
+           }
+       }
+
+       @media (min-width: 768px) {
+           .personal-history {
+               display: flex;
+               justify-content: flex-start;
+           }
+
+           .personal-history dt {
+               width: 80px;
+           }
+       }
+
+       /* ----------------------------------------
+            ISSHU
+    -------------------------------------- */
        .isshu-wrap {
            display: flex;
            flex-direction: row;
