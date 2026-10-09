@@ -7,11 +7,11 @@ let currentPath = '';
 
 // パス名と表示名のマッピング
 const nameMap = {
-    "essay": "essay",
+    "essay": "Essay",
     "note": "雑記",
     "sampo": "散歩日記",
-    "review": "review",
-    "work": "作品",
+    "review": "Review",
+    "work": "Work",
     "tanka": "短歌"
 };
 

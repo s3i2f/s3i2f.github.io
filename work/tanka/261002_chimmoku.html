@@ -15,17 +15,49 @@
     <link rel="icon" href="/common/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/style.css">
 
-    <title>沈黙 | 短歌</title>
+    <title>沈黙 | Seiji Fujimura</title>
 </head>
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JC403ZDDF"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-5JC403ZDDF');
+</script>
+
+
 <body>
+
     <header>
-        <!-- <div class="title">
-            <h1>藤村誠二 / Seiji Fujimura</h1>
-        </div> -->
+        <div class="title">
+            <h1><a href="/index.html">藤村誠二 / Seiji Fujimura</a></h1>
+        </div>
+        <!---TOP NAVIGATION--->
+        <nav class="top-nav">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about.html" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/work/" class="nav-link active">Work</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/essay/" class="nav-link">Essay</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/review/" class="nav-link">Review</a>
+                </li>
+            </ul>
+        </nav>
+
 
         <nav id="breadcrumbs" aria-label="breadcrumb"></nav>
-
     </header>
 
     <aside>
@@ -50,7 +82,7 @@
     </aside>
 
     <main>
-        <h1>沈黙</h1>
+        <h2>沈黙</h2>
 
         <div class="tanka-desc">
             『神大短歌』vol.12に寄稿した会員連作。
@@ -86,7 +118,6 @@
     </main>
 
     <script src="/site-data.js"></script>
-    <script src="/js/navigation.js"></script>
 
     <footer class="site-footer">
         <div class="footer-container">
@@ -138,7 +169,5 @@
     <script src="/js/breadcrumbs.js"></script>
 
 </body>
-
-
 
 </html>
