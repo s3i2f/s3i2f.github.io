@@ -54,7 +54,8 @@ h2 {
 }
 
 h3 {
-    margin-top: 15px;
+    margin-top: 30px;
+    margin-bottom: 15px;
 }
 
 a {
@@ -72,8 +73,7 @@ a:hover {
 .site-title {
     font-size: 12px;
     margin-bottom: 1rem;
-    padding-bottom: 0.8rem;
-    border-bottom: 2px solid #2a2a2a;
+    border-bottom: 2px solid #444;
     overflow: hidden;
 }
 
@@ -92,7 +92,6 @@ a:hover {
     background-color: var(--nav-bg);
     font-family: 'Times New Roman', Times, serif;
     overflow-x: auto;
-    /* 折り返さず1行に保持 */
 }
 
 .nav-list {
@@ -101,7 +100,6 @@ a:hover {
     align-items: center;
     width: 100%;
     gap: clamp(4px, 1.5vw, 12px);
-    /* 画面幅に応じて間隔を自動調整 */
     margin: 0;
     padding: 0;
     list-style: none;
@@ -118,10 +116,8 @@ a:hover {
     z-index: 1;
     display: block;
     padding: 12px clamp(4px, 1vw, 24px);
-    /* パディングも画面幅に合わせて縮小 */
     color: var(--text-color);
     font-size: clamp(0.75rem, 2.5vw, 1rem);
-    /* テキストも溢れないよう自動縮小 */
     font-weight: 600;
     letter-spacing: 0.02em;
     text-decoration: none;
@@ -291,7 +287,7 @@ a:hover {
 }
 
 /* ==========================================================================
-   Intro / Profile
+   Home / Profile
    ========================================================================== */
 .intro {
     display: flex;
@@ -332,7 +328,7 @@ a:hover {
 }
 
 /* ==========================================================================
-   Recent News & Updates
+   Home / Recent News & Updates
    ========================================================================== */
 #recent-updates ul {
     padding-left: 0;
@@ -407,53 +403,6 @@ a:hover {
 }
 
 /* ==========================================================================
-   Tag Filtering & Badges
-   ========================================================================== */
-.tag-filter-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 1.5rem;
-}
-
-.tag-buttons button {
-    margin-right: 5px;
-    padding: 4px 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.tag-buttons button:hover {
-    background-color: #e2e8f0;
-}
-
-.tag-buttons button.active {
-    background-color: #4a5568;
-    border-color: #4a5568;
-    color: #ffffff;
-}
-
-.category-list .tags-wrapper {
-    display: inline-block;
-    margin-left: 10px;
-}
-
-.tag {
-    display: inline-block;
-    padding: 2px 6px;
-    margin-left: 5px;
-    background-color: #edf2f7;
-    border-radius: 3px;
-    color: #666;
-    font-size: 0.75rem;
-}
-
-/* ==========================================================================
    Breadcrumb
    ========================================================================== */
 #breadcrumbs {
@@ -488,7 +437,6 @@ a:hover {
     margin: 0 auto;
 }
 
-/* モバイル表示時の余白調整（縦並びの隙間を適度に詰める） */
 .footer-nav-blocks {
     display: flex;
     flex-wrap: wrap;
@@ -628,40 +576,6 @@ a:hover {
     margin-block-start: 0;
 }
 
-/* ==========================================================================
-   Tanka / list
-   ========================================================================== */
-.work-tanka-list {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 0.8rem;
-}
-
-.work-tanka-list::after {
-    content: "";
-    flex: 1;
-    border-bottom: 2px dotted #666;
-    margin: 0 0.25rem 0.3em;
-    order: 1;
-}
-
-.work-tanka-list dt {
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-    white-space: nowrap;
-    margin: 0;
-    order: 0;
-}
-
-.work-tanka-list dd {
-    margin: 0;
-    white-space: nowrap;
-    order: 2;
-}
 
 /* ==========================================================================
    Responsive Styles (Tablet / Desktop: min-width 768px)
@@ -673,7 +587,6 @@ a:hover {
         flex-direction: row;
     }
 
-    /* Footer（PCなど広い画面時のゆったりとした余白設定） */
     .site-footer {
         margin-top: 80px;
         padding: 50px 20px 20px;
