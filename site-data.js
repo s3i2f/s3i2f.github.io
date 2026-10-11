@@ -10,13 +10,7 @@ const siteData = {
     ],
     // 全記事データ（新しい記事が上）
     articles: [
-        // {
-        //     date: "2026-10-31",
-        //     title: "城跡にて",
-        //     url: "/work/tanka/261031_shiroatonite.html",
-        //     category: "tanka",
-        //     tags: ["短歌作品"]
-        // },
+
         // {
         //     date: "2026-10-**",
         //     title: "パフェ歌会",
@@ -25,13 +19,20 @@ const siteData = {
         //     tags: ["歌会", "短歌作品"]
         // },
         // {
+        //     date: "2026-10-31",
+        //     title: "城跡にて",
+        //     url: "/work/tanka/261031_shiroatonite.html",
+        //     category: "tanka",
+        //     tags: ["短歌作品"]
+        // },
+
+        // {
         //     date: "2026-10-04",
         //     title: "第三回大学短歌トーナメントin関西雑感",
         //     url: "/essay/note/2610**_tournament.html",
         //     category: "note",
         //     tags: ["短歌作品"]
         // },
-
         {
             date: "2026-10-10",
             title: "長めの散歩",
@@ -96,6 +97,5 @@ const siteData = {
             tags: ["自己紹介"]
         },
 
-        // { date: "2026-09-05", title: "散歩の記録", url: "/essay/sampo/smp0005.html", category: "sampo", tags: ["写真"] },
     ]
 };
