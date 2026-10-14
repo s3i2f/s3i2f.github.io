@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Top Navigation (Compact Variant for Article Pages)
+   ========================================================================== */
+.top-nav.is-compact {
+    display: flex;
+    justify-content: flex-end;
+    /* 右寄せに変更 */
+    width: 100%;
+    padding: 8px 16px;
+    /* 上下左右の余白を少し縮小 */
+    background-color: var(--nav-bg);
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.top-nav.is-compact .nav-list {
+    display: flex;
+    justify-content: flex-end;
+    /* 右寄せ */
+    align-items: center;
+    width: auto;
+    /* 幅いっぱいに広げずコンテンツ幅に合わせる */
+    gap: clamp(8px, 1.2vw, 16px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.top-nav.is-compact .nav-item {
+    position: relative;
+    flex: 0 0 auto;
+    /* 均等拡大・縮小を無効化 */
+    text-align: right;
+}
+
+.top-nav.is-compact .nav-link {
+    position: relative;
+    z-index: 1;
+    display: block;
+    padding: 4px 8px;
+    /* パディングをコンパクトに */
+    color: var(--text-color);
+    font-size: clamp(0.75rem, 1.2vw, 0.85rem);
+    /* フォントサイズを一段小さく */
+    font-weight: 500;
+    /* 少し細くして主張を抑える */
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--transition-speed) ease;
+}
+
+.top-nav.is-compact .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    /* 下線を3pxから2pxに補足 */
+    background-color: var(--active-color);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.top-nav.is-compact .nav-link:hover,
+.top-nav.is-compact .nav-link.active {
+    color: var(--active-color);
+}
+
+.top-nav.is-compact .nav-link:hover::after,
+.top-nav.is-compact .nav-link.active::after {
+    transform: scaleX(1);
+}
