@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>短歌作品縦組みツール</title>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif;
+            background-color: #f4f8f5;
+            color: #2b2b2b;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- 固定ヘッダー & アプリ全体フレーム --- */
+        .app-header {
+            background-color: #ffffff;
+            border-bottom: 2px solid #529b74;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(82, 155, 116, 0.1);
+        }
+
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            color: #2e6b47;
+            letter-spacing: 1px;
+        }
+
+        .app-header p {
+            margin: 6px 0 0 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* --- 進捗インジケーター --- */
+        .step-progress-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0ede5;
+            position: relative;
+        }
+
+        .step-progress-item {
+            flex: 1;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #a0aec0;
+            padding: 8px 4px;
+            border-bottom: 3px solid #cbd5e0;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .step-progress-item.active {
+            color: #2e6b47;
+            border-bottom-color: #529b74;
+        }
+
+        .step-progress-item:not(:last-child)::after {
+            content: ">>";
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #cbd5e0;
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+
+        /* --- アプリデザイン --- */
+        .screen-container {
+            max-width: 800px;
+            margin: 30px auto 50px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(82, 155, 116, 0.08);
+            border: 1px solid #dcebe1;
+        }
+
+        h2 {
+            color: #2e6b47;
+            border-bottom: 2px solid #529b74;
+            padding-bottom: 8px;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .step-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            color: #334155;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            background-color: #f8faf9;
+            font-family: inherit;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #529b74;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(82, 155, 116, 0.2);
+        }
+
+        .toggle-sub-btn {
+            background: none;
+            border: none;
+            color: #2e6b47;
+            font-size: 0.85rem;
+            cursor: pointer;
+            padding: 4px 0;
+            text-decoration: underline;
+            margin-top: 6px;
+            display: inline-block;
+            margin-right: 12px;
+        }
+
+        .toggle-sub-btn:hover {
+            color: #1e472f;
+        }
+
+        .sub-input-area {
+            margin-top: 8px;
+            padding: 12px;
+            background-color: #f0f7f3;
+            border: 1px solid #d0e5d8;
+            border-radius: 4px;
+        }
+
+        .ruby-pair-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .ruby-pair-item input {
+            padding: 6px 8px;
+            font-size: 13px;
+        }
+
+        .btn-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-family: inherit;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background-color: #cbd5e0 !important;
+            color: #a0aec0 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-primary {
+            background-color: #529b74;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #428260;
+        }
+
+        .btn-success {
+            background-color: #38a169;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .btn-success:hover {
+            background-color: #2f855a;
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e0;
+        }
+
+        .btn-danger {
+            background-color: #e53e3e;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        /* リスト表示スタイル */
+        .registered-list {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .registered-item {
+            padding: 12px 15px;
+            background-color: #ffffff;
+            border: 1px solid #dcebe1;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .registered-item:hover {
+            border-color: #529b74;
+        }
+
+        .registered-item-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .registered-item-kotogoto {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .registered-item-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* 確認エリア（Step 3） */
+        .confirm-wrapper {
+            margin-top: 15px;
+            padding: 20px;
+            background-color: #f8faf9;
+            border: 1px solid #dcebe1;
+            border-radius: 6px;
+        }
+
+        .confirm-header-box {
+            padding: 12px 15px;
+            background-color: #edf5f0;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px dashed #b2d8c3;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .confirm-header-box:hover {
+            background-color: #e2ede6;
+        }
+
+        .confirm-header-box .edit-hint,
+        .confirm-tanka-item .edit-hint {
+            position: absolute;
+            right: 15px;
+            top: 12px;
+            font-size: 0.75rem;
+            color: #2e6b47;
+            font-weight: bold;
+        }
+
+        .confirm-tanka-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .confirm-tanka-item {
+            padding: 12px 15px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .confirm-tanka-item:hover {
+            border-color: #529b74;
+            background-color: #f0f7f3;
+        }
+
+        .preview-section-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #2e6b47;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #529b74;
+            padding-bottom: 4px;
+        }
+
+        .output-option-box {
+            background-color: #f8faf9;
+            border: 1px solid #dcebe1;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- モーダルダイアログ用スタイル --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.45);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid #dcebe1;
+        }
+
+        .modal-title {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #2e6b47;
+            border-bottom: 2px solid #529b74;
+            padding-bottom: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="app-header">
+        <h1>短歌作品縦組みツール</h1>
+        <p>短歌作品を美しく縦書きに組み、PDFや印刷用データを出力します</p>
+    </header>
+
+    <div class="screen-container">
+        <!-- 進捗表示インジケーター -->
+        <div class="step-progress-bar">
+            <div id="progress-step-1" class="step-progress-item active" onclick="goToStep(1)">1. メタデータ入力</div>
+            <div id="progress-step-2" class="step-progress-item" onclick="goToStep(2)">2. 短歌入力</div>
+            <div id="progress-step-3" class="step-progress-item" onclick="goToStep(3)">3. 確認・デザイン設定</div>
+        </div>
+
+        <!-- STEP 1 -->
+        <div id="step-1">
+            <h2>Step 1. メタデータの入力</h2>
+            <p class="step-desc">作品のタイトルや作者名、出典・初出情報を入力してください（空欄でも構いません）。</p>
+
+            <div class="input-group">
+                <label for="work-title">連作タイトル</label>
+                <input type="text" id="work-title" class="input-field" placeholder="例: 遠い日の海">
+            </div>
+
+            <div class="input-group">
+                <label for="author-name">作者名</label>
+                <input type="text" id="author-name" class="input-field" placeholder="例: 山田 太郎">
+            </div>
+
+            <div class="input-group">
+                <label for="source-info">初出情報・出典（版面末尾に記載）</label>
+                <input type="text" id="source-info" class="input-field" placeholder="例: 『短歌雑誌』2025年4月号、歌集『海沿いの街』所収 など">
+            </div>
+
+            <div class="btn-group">
+                <button id="to-step-2-btn" class="btn-primary" type="button">次へ（短歌の入力）</button>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div id="step-2" class="hidden">
+            <h2>Step 2. 短歌の入力</h2>
+            <p class="step-desc">一首ずつ短歌を入力し、「歌を追加」を押して登録してください。<br>登録された短歌は下のリストで「編集」や「削除」を行えます。</p>
+
+            <div class="input-group">
+                <label for="kotogoto-input">詞書（ことばがき／オプション）</label>
+                <div>
+                    <button type="button" id="toggle-kotogoto-btn" class="toggle-sub-btn">＋ 詞書を追加する</button>
+                </div>
+                <div id="kotogoto-input-area" class="sub-input-area hidden">
+                    <input type="text" id="kotogoto-input" class="input-field" placeholder="例: 母の米寿を祝ひて">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="tanka-input">短歌本文</label>
+                <input type="text" id="tanka-input" class="input-field" placeholder="短歌を入力..." autofocus>
+
+                <div>
+                    <button type="button" id="toggle-ruby-btn" class="toggle-sub-btn">＋ ルビ（ふりがな）を追加する</button>
+                </div>
+
+                <div id="ruby-input-area" class="sub-input-area hidden">
+                    <div style="font-size: 0.8rem; color: #555; margin-bottom: 6px;">対象の文字とルビを入力してください</div>
+                    <div id="ruby-pairs-container">
+                        <div class="ruby-pair-item">
+                            <input type="text" class="input-field ruby-target" placeholder="対象の文字 (例: 街)" style="width: 45%;">
+                            <input type="text" class="input-field ruby-text" placeholder="ルビ (例: まち)" style="width: 45%;">
+                        </div>
+                    </div>
+                    <button type="button" id="add-ruby-pair-btn" class="btn-secondary btn-small" style="margin-top: 4px;">+ ルビ枠を追加</button>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button id="add-tanka-btn" class="btn-success" type="button">歌を追加</button>
+            </div>
+
+            <div class="preview-section-title">登録済み短歌（<span id="tanka-count">0</span>首）</div>
+            <div id="registered-tanka-list" class="registered-list"></div>
+
+            <div class="btn-group" style="margin-top: 25px;">
+                <button id="to-step-3-btn" class="btn-primary" type="button" disabled>次へ（確認・出力設定）</button>
+                <button id="back-to-step1-btn" class="btn-secondary" type="button">メタデータを変更</button>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div id="step-3" class="hidden">
+            <h2>Step 3. 確認とレイアウト設定・出力</h2>
+            <p class="step-desc">入力内容の確認およびレイアウト設定を行ってください。<br>※確認エリアの項目をクリックするといつでも内容を修正できます。</p>
+
+            <div class="preview-section-title">デザイン・レイアウト設定</div>
+            <div class="output-option-box">
+                <div class="option-grid">
+                    <div>
+                        <label for="paper-size-select" style="font-weight: bold; font-size: 0.85rem;">用紙サイズ</label>
+                        <select id="paper-size-select" class="input-field" style="margin-top: 4px;">
+                            <option value="a4" selected>A4 (横向き)</option>
+                            <option value="a5">A5 (横向き)</option>
+                            <option value="b5">B5 (横向き)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="font-family-select" style="font-weight: bold; font-size: 0.85rem;">書体（フォント）</label>
+                        <select id="font-family-select" class="input-field" style="margin-top: 4px;">
+                            <option value="mincho" selected>明朝体（標準）</option>
+                            <option value="gothic">ゴシック体</option>
+                            <option value="kaisho">教科書体 / 楷書体風</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-section-title">入力内容の確認</div>
+            <div class="confirm-wrapper">
+                <div id="confirm-header" class="confirm-header-box" title="メタデータを編集">
+                    <span class="edit-hint">編集する ✎</span>
+                    <div style="font-weight: bold; font-size: 1.1rem; color: #2e6b47;" id="confirm-title"></div>
+                    <div style="font-size: 0.9rem; color: #444; margin-top: 4px;" id="confirm-author"></div>
+                    <div style="font-size: 0.8rem; color: #666; margin-top: 6px;" id="confirm-source"></div>
+                </div>
+                <div id="confirm-tanka-list" class="confirm-tanka-list"></div>
+            </div>
+
+            <div class="preview-section-title">PDF出力 / 印刷</div>
+            <div class="output-option-box">
+                <div class="btn-group" style="margin-top: 0;">
+                    <button id="download-pdf-btn" class="btn-primary" type="button">印刷 / PDF保存</button>
+                    <button id="view-window-btn" class="btn-secondary" type="button">画面に表示（別ウィンドウ）</button>
+                </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 25px;">
+                <button id="back-to-step2-btn" class="btn-secondary" type="button">短歌追加画面に戻る</button>
+                <button id="restart-btn" class="btn-secondary" type="button">最初からやり直す</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル: メタデータ編集 -->
+    <div id="edit-metadata-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="modal-title">メタデータの変更</h3>
+            <div class="input-group">
+                <label for="modal-work-title">連作タイトル</label>
+                <input type="text" id="modal-work-title" class="input-field">
+            </div>
+            <div class="input-group">
+                <label for="modal-author-name">作者名</label>
+                <input type="text" id="modal-author-name" class="input-field">
+            </div>
+            <div class="input-group">
+                <label for="modal-source-info">初出情報・出典</label>
+                <input type="text" id="modal-source-info" class="input-field">
+            </div>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button id="modal-metadata-cancel-btn" class="btn-secondary" type="button">キャンセル</button>
+                <button id="modal-metadata-save-btn" class="btn-primary" type="button">変更を保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル: 短歌編集 -->
+    <div id="edit-tanka-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 class="modal-title">短歌の変更</h3>
+            <div class="input-group">
+                <label for="modal-kotogoto-input">詞書（ことばがき）</label>
+                <div>
+                    <button type="button" id="modal-toggle-kotogoto-btn" class="toggle-sub-btn">＋ 詞書を追加する</button>
+                </div>
+                <div id="modal-kotogoto-input-area" class="sub-input-area hidden">
+                    <input type="text" id="modal-kotogoto-input" class="input-field" placeholder="詞書を入力...">
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="modal-tanka-input">短歌本文</label>
+                <input type="text" id="modal-tanka-input" class="input-field">
+                <div>
+                    <button type="button" id="modal-toggle-ruby-btn" class="toggle-sub-btn">＋ ルビ（ふりがな）を追加する</button>
+                </div>
+                <div id="modal-ruby-input-area" class="sub-input-area hidden">
+                    <div style="font-size: 0.8rem; color: #555; margin-bottom: 6px;">対象の文字とルビを入力してください</div>
+                    <div id="modal-ruby-pairs-container"></div>
+                    <button type="button" id="modal-add-ruby-pair-btn" class="btn-secondary btn-small" style="margin-top: 4px;">+ ルビ枠を追加</button>
+                </div>
+            </div>
+            <div class="btn-group" style="justify-content: space-between;">
+                <div>
+                    <button id="modal-tanka-delete-btn" class="btn-danger" type="button">この歌を削除</button>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button id="modal-tanka-cancel-btn" class="btn-secondary" type="button">キャンセル</button>
+                    <button id="modal-tanka-save-btn" class="btn-primary" type="button">変更を保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tankaDataList = [];
+        let metadata = { title: '', author: '', source: '' };
+        let editingTankaRef = null;
+        let currentStep = 1;
+
+        const step1 = document.getElementById('step-1');
+        const step2 = document.getElementById('step-2');
+        const step3 = document.getElementById('step-3');
+
+        const progressSteps = [
+            document.getElementById('progress-step-1'),
+            document.getElementById('progress-step-2'),
+            document.getElementById('progress-step-3')
+        ];
+
+        const workTitleInput = document.getElementById('work-title');
+        const authorNameInput = document.getElementById('author-name');
+        const sourceInfoInput = document.getElementById('source-info');
+
+        const tankaInput = document.getElementById('tanka-input');
+        const kotogotoInput = document.getElementById('kotogoto-input');
+        const tankaCount = document.getElementById('tanka-count');
+        const registeredTankaList = document.getElementById('registered-tanka-list');
+
+        const toggleKotogotoBtn = document.getElementById('toggle-kotogoto-btn');
+        const kotogotoInputArea = document.getElementById('kotogoto-input-area');
+
+        const toggleRubyBtn = document.getElementById('toggle-ruby-btn');
+        const rubyInputArea = document.getElementById('ruby-input-area');
+        const rubyPairsContainer = document.getElementById('ruby-pairs-container');
+        const addRubyPairBtn = document.getElementById('add-ruby-pair-btn');
+
+        const addTankaBtn = document.getElementById('add-tanka-btn');
+        const toStep2Btn = document.getElementById('to-step-2-btn');
+        const toStep3Btn = document.getElementById('to-step-3-btn');
+        const backToStep1Btn = document.getElementById('back-to-step1-btn');
+        const backToStep2Btn = document.getElementById('back-to-step2-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        const downloadPdfBtn = document.getElementById('download-pdf-btn');
+        const viewWindowBtn = document.getElementById('view-window-btn');
+
+        const paperSizeSelect = document.getElementById('paper-size-select');
+        const fontFamilySelect = document.getElementById('font-family-select');
+
+        // モーダル関連の要素
+        const editMetadataModal = document.getElementById('edit-metadata-modal');
+        const modalWorkTitle = document.getElementById('modal-work-title');
+        const modalAuthorName = document.getElementById('modal-author-name');
+        const modalSourceInfo = document.getElementById('modal-source-info');
+        const modalMetadataCancelBtn = document.getElementById('modal-metadata-cancel-btn');
+        const modalMetadataSaveBtn = document.getElementById('modal-metadata-save-btn');
+
+        const editTankaModal = document.getElementById('edit-tanka-modal');
+        const modalTankaInput = document.getElementById('modal-tanka-input');
+        const modalKotogotoInput = document.getElementById('modal-kotogoto-input');
+        const modalToggleKotogotoBtn = document.getElementById('modal-toggle-kotogoto-btn');
+        const modalKotogotoInputArea = document.getElementById('modal-kotogoto-input-area');
+        const modalToggleRubyBtn = document.getElementById('modal-toggle-ruby-btn');
+        const modalRubyInputArea = document.getElementById('modal-ruby-input-area');
+        const modalRubyPairsContainer = document.getElementById('modal-ruby-pairs-container');
+        const modalAddRubyPairBtn = document.getElementById('modal-add-ruby-pair-btn');
+        const modalTankaDeleteBtn = document.getElementById('modal-tanka-delete-btn');
+        const modalTankaCancelBtn = document.getElementById('modal-tanka-cancel-btn');
+        const modalTankaSaveBtn = document.getElementById('modal-tanka-save-btn');
+
+        function updateProgressIndicator(activeStep) {
+            currentStep = activeStep;
+            progressSteps.forEach((el, idx) => {
+                el.classList.toggle('active', idx + 1 === activeStep);
+            });
+        }
+
+        /* 詞書アコーディオン切り替え */
+        toggleKotogotoBtn.addEventListener('click', () => {
+            kotogotoInputArea.classList.toggle('hidden');
+            const isHidden = kotogotoInputArea.classList.contains('hidden');
+            toggleKotogotoBtn.textContent = isHidden ? '＋ 詞書を追加する' : '－ 詞書欄を閉じる';
+            if (isHidden) kotogotoInput.value = '';
+        });
+
+        /* ルビアコーディオン切り替え */
+        toggleRubyBtn.addEventListener('click', () => {
+            rubyInputArea.classList.toggle('hidden');
+            toggleRubyBtn.textContent = rubyInputArea.classList.contains('hidden')
+                ? '＋ ルビ（ふりがな）を追加する'
+                : '－ ルビ（ふりがな）欄を閉じる';
+        });
+
+        addRubyPairBtn.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.className = 'ruby-pair-item';
+            div.innerHTML = `
+                <input type="text" class="input-field ruby-target" placeholder="対象の文字" style="width: 45%;">
+                <input type="text" class="input-field ruby-text" placeholder="ルビ" style="width: 45%;">
+            `;
+            rubyPairsContainer.appendChild(div);
+        });
+
+        function buildTankaHTML(text, rubyPairs) {
+            let htmlText = text;
+            if (rubyPairs && rubyPairs.length > 0) {
+                rubyPairs.forEach(pair => {
+                    if (pair.target && pair.ruby) {
+                        const rubyHTML = `<ruby>${pair.target}<rt>${pair.ruby}</rt></ruby>`;
+                        htmlText = htmlText.split(pair.target).join(rubyHTML);
+                    }
+                });
+            }
+            return htmlText;
+        }
+
+        function saveMetadata() {
+            metadata.title = workTitleInput.value.trim();
+            metadata.author = authorNameInput.value.trim();
+            metadata.source = sourceInfoInput.value.trim();
+        }
+
+        function renderRegisteredTankaList() {
+            registeredTankaList.innerHTML = '';
+            tankaCount.textContent = tankaDataList.length;
+
+            tankaDataList.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'registered-item';
+
+                let kotogotoHTML = item.kotogoto ? `<div class="registered-item-kotogoto">詞書: ${item.kotogoto}</div>` : '';
+                let tankaHTML = buildTankaHTML(item.text, item.rubyPairs);
+
+                div.innerHTML = `
+                    <div class="registered-item-content">
+                        ${kotogotoHTML}
+                        <div><strong>${index + 1}.</strong> ${tankaHTML}</div>
+                    </div>
+                    <div class="registered-item-actions">
+                        <button class="btn-secondary btn-small" type="button">編集</button>
+                        <button class="btn-danger btn-small" type="button">削除</button>
+                    </div>
+                `;
+
+                const editBtn = div.querySelector('.btn-secondary');
+                editBtn.addEventListener('click', () => openTankaModal(item));
+
+                const deleteBtn = div.querySelector('.btn-danger');
+                deleteBtn.addEventListener('click', () => removeTanka(index));
+
+                registeredTankaList.appendChild(div);
+            });
+
+            toStep3Btn.disabled = tankaDataList.length === 0;
+        }
+
+        function removeTanka(index) {
+            if (confirm('この短歌を削除しますか？')) {
+                tankaDataList.splice(index, 1);
+                renderRegisteredTankaList();
+                if (currentStep === 3) renderConfirmArea();
+            }
+        }
+
+        addTankaBtn.addEventListener('click', () => {
+            const textVal = tankaInput.value.trim();
+            if (!textVal) {
+                alert('短歌本文を入力してください。');
+                return;
+            }
+
+            const kotogotoVal = kotogotoInput.value.trim();
+            const rubyPairs = [];
+            const targets = rubyInputArea.querySelectorAll('.ruby-target');
+            const texts = rubyInputArea.querySelectorAll('.ruby-text');
+            let hasMissingTarget = false;
+            let missingTargets = [];
+
+            targets.forEach((targetInput, idx) => {
+                const target = targetInput.value.trim();
+                const ruby = texts[idx].value.trim();
+                if (target && ruby) {
+                    if (!textVal.includes(target)) {
+                        hasMissingTarget = true;
+                        missingTargets.push(target);
+                    } else {
+                        rubyPairs.push({ target, ruby });
+                    }
+                }
+            });
+
+            if (hasMissingTarget) {
+                alert(`ルビの対象文字「${missingTargets.join('、')}」が短歌本文に含まれていません。`);
+                return;
+            }
+
+            tankaDataList.push({
+                text: textVal,
+                kotogoto: kotogotoVal,
+                rubyPairs: rubyPairs
+            });
+
+            // フォームリセット
+            tankaInput.value = '';
+            kotogotoInput.value = '';
+            rubyPairsContainer.innerHTML = `
+                <div class="ruby-pair-item">
+                  <input type="text" class="input-field ruby-target" placeholder="対象の文字 (例: 街)" style="width: 45%;">
+                  <input type="text" class="input-field ruby-text" placeholder="ルビ (例: まち)" style="width: 45%;">
+                </div>
+            `;
+            rubyInputArea.classList.add('hidden');
+            kotogotoInputArea.classList.add('hidden');
+            toggleRubyBtn.textContent = '＋ ルビ（ふりがな）を追加する';
+            toggleKotogotoBtn.textContent = '＋ 詞書を追加する';
+
+            renderRegisteredTankaList();
+            tankaInput.focus();
+        });
+
+        function goToStep(stepNum) {
+            if (stepNum === currentStep) return;
+
+            if (currentStep === 1) {
+                saveMetadata();
+            }
+
+            if (stepNum === 1) {
+                step2.classList.add('hidden');
+                step3.classList.add('hidden');
+                step1.classList.remove('hidden');
+                updateProgressIndicator(1);
+            } else if (stepNum === 2) {
+                renderRegisteredTankaList();
+                step1.classList.add('hidden');
+                step3.classList.add('hidden');
+                step2.classList.remove('hidden');
+                updateProgressIndicator(2);
+                tankaInput.focus();
+            } else if (stepNum === 3) {
+                if (tankaDataList.length === 0) {
+                    alert('短歌が1首も登録されていません。');
+                    return;
+                }
+                renderConfirmArea();
+                step1.classList.add('hidden');
+                step2.classList.add('hidden');
+                step3.classList.remove('hidden');
+                updateProgressIndicator(3);
+            }
+        }
+
+        function renderConfirmArea() {
+            document.getElementById('confirm-title').textContent = metadata.title || '（タイトル未設定）';
+            document.getElementById('confirm-author').textContent = metadata.author ? `作者: ${metadata.author}` : '（作者未設定）';
+            document.getElementById('confirm-source').textContent = metadata.source ? `初出/出典: ${metadata.source}` : '';
+
+            const confirmListDiv = document.getElementById('confirm-tanka-list');
+            confirmListDiv.innerHTML = '';
+
+            tankaDataList.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'confirm-tanka-item';
+                div.title = 'この歌を編集';
+
+                const hintSpan = document.createElement('span');
+                hintSpan.className = 'edit-hint';
+                hintSpan.textContent = '編集する ✎';
+                div.appendChild(hintSpan);
+
+                let kotogotoHTML = item.kotogoto ? `<div style="font-size: 0.85rem; color: #666; margin-bottom: 4px;">詞書: ${item.kotogoto}</div>` : '';
+                let textHTML = buildTankaHTML(item.text, item.rubyPairs);
+
+                const bodyDiv = document.createElement('div');
+                bodyDiv.innerHTML = `${kotogotoHTML}<div style="font-size: 1rem;"><strong>${idx + 1}.</strong> ${textHTML}</div>`;
+                div.appendChild(bodyDiv);
+
+                div.addEventListener('click', () => openTankaModal(item));
+                confirmListDiv.appendChild(div);
+            });
+        }
+
+        document.getElementById('confirm-header').addEventListener('click', openMetadataModal);
+
+        /* モーダル処理：メタデータ */
+        function openMetadataModal() {
+            modalWorkTitle.value = metadata.title;
+            modalAuthorName.value = metadata.author;
+            modalSourceInfo.value = metadata.source;
+            editMetadataModal.classList.remove('hidden');
+        }
+
+        modalMetadataCancelBtn.addEventListener('click', () => editMetadataModal.classList.add('hidden'));
+
+        modalMetadataSaveBtn.addEventListener('click', () => {
+            metadata.title = modalWorkTitle.value.trim();
+            metadata.author = modalAuthorName.value.trim();
+            metadata.source = modalSourceInfo.value.trim();
+
+            workTitleInput.value = metadata.title;
+            authorNameInput.value = metadata.author;
+            sourceInfoInput.value = metadata.source;
+
+            renderConfirmArea();
+            editMetadataModal.classList.add('hidden');
+        });
+
+        /* モーダル処理：短歌 */
+        function openTankaModal(itemRef) {
+            if (!itemRef) return;
+            editingTankaRef = itemRef;
+
+            modalTankaInput.value = itemRef.text;
+            modalKotogotoInput.value = itemRef.kotogoto || '';
+
+            if (itemRef.kotogoto) {
+                modalKotogotoInputArea.classList.remove('hidden');
+                modalToggleKotogotoBtn.textContent = '－ 詞書欄を閉じる';
+            } else {
+                modalKotogotoInputArea.classList.add('hidden');
+                modalToggleKotogotoBtn.textContent = '＋ 詞書を追加する';
+            }
+
+            modalRubyPairsContainer.innerHTML = '';
+            if (itemRef.rubyPairs && itemRef.rubyPairs.length > 0) {
+                modalRubyInputArea.classList.remove('hidden');
+                modalToggleRubyBtn.textContent = '－ ルビ（ふりがな）欄を閉じる';
+                itemRef.rubyPairs.forEach(pair => {
+                    const div = document.createElement('div');
+                    div.className = 'ruby-pair-item';
+                    div.innerHTML = `
+                        <input type="text" class="input-field modal-ruby-target" value="${pair.target}" style="width: 45%;">
+                        <input type="text" class="input-field modal-ruby-text" value="${pair.ruby}" style="width: 45%;">
+                    `;
+                    modalRubyPairsContainer.appendChild(div);
+                });
+            } else {
+                modalRubyInputArea.classList.add('hidden');
+                modalToggleRubyBtn.textContent = '＋ ルビ（ふりがな）を追加する';
+                modalRubyPairsContainer.innerHTML = `
+                    <div class="ruby-pair-item">
+                      <input type="text" class="input-field modal-ruby-target" placeholder="対象の文字 (例: 街)" style="width: 45%;">
+                      <input type="text" class="input-field modal-ruby-text" placeholder="ルビ (例: まち)" style="width: 45%;">
+                    </div>
+                `;
+            }
+
+            editTankaModal.classList.remove('hidden');
+            modalTankaInput.focus();
+        }
+
+        modalToggleKotogotoBtn.addEventListener('click', () => {
+            modalKotogotoInputArea.classList.toggle('hidden');
+            const isHidden = modalKotogotoInputArea.classList.contains('hidden');
+            modalToggleKotogotoBtn.textContent = isHidden ? '＋ 詞書を追加する' : '－ 詞書欄を閉じる';
+            if (isHidden) modalKotogotoInput.value = '';
+        });
+
+        modalToggleRubyBtn.addEventListener('click', () => {
+            modalRubyInputArea.classList.toggle('hidden');
+            modalToggleRubyBtn.textContent = modalRubyInputArea.classList.contains('hidden')
+                ? '＋ ルビ（ふりがな）を追加する'
+                : '－ ルビ（ふりがな）欄を閉じる';
+        });
+
+        modalAddRubyPairBtn.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.className = 'ruby-pair-item';
+            div.innerHTML = `
+                <input type="text" class="input-field modal-ruby-target" placeholder="対象の文字" style="width: 45%;">
+                <input type="text" class="input-field modal-ruby-text" placeholder="ルビ" style="width: 45%;">
+            `;
+            modalRubyPairsContainer.appendChild(div);
+        });
+
+        modalTankaCancelBtn.addEventListener('click', () => editTankaModal.classList.add('hidden'));
+
+        modalTankaDeleteBtn.addEventListener('click', () => {
+            if (!editingTankaRef) return;
+            if (confirm('この短歌を削除しますか？')) {
+                const idx = tankaDataList.indexOf(editingTankaRef);
+                if (idx !== -1) tankaDataList.splice(idx, 1);
+                renderRegisteredTankaList();
+                if (currentStep === 3) renderConfirmArea();
+                editTankaModal.classList.add('hidden');
+            }
+        });
+
+        modalTankaSaveBtn.addEventListener('click', () => {
+            const textVal = modalTankaInput.value.trim();
+            if (!textVal) {
+                alert('短歌本文を入力してください。');
+                return;
+            }
+
+            const kotogotoVal = modalKotogotoInput.value.trim();
+            const rubyPairs = [];
+            const targets = modalRubyInputArea.querySelectorAll('.modal-ruby-target');
+            const texts = modalRubyInputArea.querySelectorAll('.modal-ruby-text');
+            let hasMissingTarget = false;
+            let missingTargets = [];
+
+            targets.forEach((targetInput, idx) => {
+                const target = targetInput.value.trim();
+                const ruby = texts[idx].value.trim();
+                if (target && ruby) {
+                    if (!textVal.includes(target)) {
+                        hasMissingTarget = true;
+                        missingTargets.push(target);
+                    } else {
+                        rubyPairs.push({ target, ruby });
+                    }
+                }
+            });
+
+            if (hasMissingTarget) {
+                alert(`ルビの対象文字「${missingTargets.join('、')}」が短歌本文に含まれていません。`);
+                return;
+            }
+
+            if (editingTankaRef) {
+                editingTankaRef.text = textVal;
+                editingTankaRef.kotogoto = kotogotoVal;
+                editingTankaRef.rubyPairs = rubyPairs;
+            }
+
+            renderRegisteredTankaList();
+            if (currentStep === 3) renderConfirmArea();
+            editTankaModal.classList.add('hidden');
+        });
+
+        toStep2Btn.addEventListener('click', () => {
+            saveMetadata();
+            goToStep(2);
+        });
+
+        toStep3Btn.addEventListener('click', () => goToStep(3));
+        backToStep1Btn.addEventListener('click', () => goToStep(1));
+        backToStep2Btn.addEventListener('click', () => goToStep(2));
+
+        restartBtn.addEventListener('click', () => {
+            if (confirm('入力内容を初期化して最初からやり直しますか？')) {
+                tankaDataList.length = 0;
+                workTitleInput.value = '';
+                authorNameInput.value = '';
+                sourceInfoInput.value = '';
+                tankaInput.value = '';
+                kotogotoInput.value = '';
+                renderRegisteredTankaList();
+                goToStep(1);
+            }
+        });
+
+        /* PDF / 別ウィンドウ出力用HTML生成（縦書きレンダリングの不具合を解消した安定仕様） */
+        function generatePdfHTML(autoPrint = false) {
+            const paperSize = paperSizeSelect.value;
+            const fontFamily = fontFamilySelect.value;
+
+            let pageCssSize = "A4 landscape";
+            let pageMmWidth = "297mm";
+            let pageMmHeight = "210mm";
+
+            if (paperSize === "a5") {
+                pageCssSize = "A5 landscape";
+                pageMmWidth = "210mm";
+                pageMmHeight = "148mm";
+            } else if (paperSize === "b5") {
+                pageCssSize = "B5 landscape";
+                pageMmWidth = "257mm";
+                pageMmHeight = "182mm";
+            }
+
+            let fontFamilyStyle = '"Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif';
+            if (fontFamily === "gothic") {
+                fontFamilyStyle = '"Yu Gothic", "Hiragino Sans", "Meiryo", sans-serif';
+            } else if (fontFamily === "kaisho") {
+                fontFamilyStyle = '"Kaiti SC", "楷書", "UD Digital Kyokasho N-R", "HG正楷書体-PRO", serif';
+            }
+
+            const FIRST_PAGE_LIMIT = 5;
+            const SUBSEQUENT_PAGE_LIMIT = 6;
+
+            const pagesData = [];
+            let currentList = [...tankaDataList];
+
+            if (currentList.length > 0) {
+                pagesData.push(currentList.splice(0, FIRST_PAGE_LIMIT));
+            }
+            while (currentList.length > 0) {
+                pagesData.push(currentList.splice(0, SUBSEQUENT_PAGE_LIMIT));
+            }
+
+            const totalPages = pagesData.length;
+            let pagesHTML = '';
+
+            pagesData.forEach((pageItems, pageIdx) => {
+                let tankaHTML = '';
+                pageItems.forEach(item => {
+                    const textWithRuby = buildTankaHTML(item.text, item.rubyPairs);
+                    let kotogotoHTML = item.kotogoto ? `<div class="kotogoto">${item.kotogoto}</div>` : '';
+
+                    tankaHTML += `
+                        <div class="tanka-block">
+                            ${kotogotoHTML}
+                            <div class="tanka-text">${textWithRuby}</div>
+                        </div>
+                    `;
+                });
+
+                let headerHTML = '';
+                if (pageIdx === 0) {
+                    let titleHTML = metadata.title ? `<h1 class="pdf-title">${metadata.title}</h1>` : '';
+                    let authorHTML = metadata.author ? `<div class="pdf-author">${metadata.author}</div>` : '';
+                    headerHTML = `
+                        <div class="pdf-header">
+                            ${titleHTML}
+                            ${authorHTML}
+                        </div>
+                    `;
+                }
+
+                let footerHTML = '';
+                if (pageIdx === totalPages - 1 && metadata.source) {
+                    footerHTML = `
+                        <div class="pdf-footer">
+                            <span class="pdf-source">${metadata.source}</span>
+                        </div>
+                    `;
+                }
+
+                const isSinglePage = totalPages === 1;
+                const containerClass = isSinglePage ? "tanka-container single-page" : "tanka-container multi-page";
+
+                pagesHTML += `
+                    <div class="pdf-page">
+                        ${headerHTML}
+                        <div class="${containerClass}">
+                            ${tankaHTML}
+                        </div>
+                        ${footerHTML}
+                    </div>
+                `;
+            });
+
+            const printScript = autoPrint ? `<script>
+                window.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => { window.print(); }, 300);
+                });
+            <\/script>` : '';
+
+            return `<!DOCTYPE html>
+        <html lang="ja">
+        <head>
+        <meta charset="UTF-8">
+        <title>${metadata.title || '短歌作品'}</title>
+        <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        @page {
+            size: ${pageCssSize};
+            margin: 0;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            padding: 40px;
+            background-color: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: ${fontFamilyStyle};
+        }
+        @media print {
+            html, body {
+                width: ${pageMmWidth} !important;
+                height: ${pageMmHeight} !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: visible !important;
+            }
+            body {
+                display: block !important;
+            }
+            .pdf-page {
+                box-shadow: none !important;
+                margin: 0 !important;
+                width: ${pageMmWidth} !important;
+                height: ${pageMmHeight} !important;
+                padding: 18mm !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .pdf-page:last-child {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+        }
+        .pdf-page {
+            width: ${pageMmWidth};
+            height: ${pageMmHeight};
+            padding: 18mm;
+            background-color: #fff;
+            color: #2b2b2b;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            -webkit-writing-mode: vertical-rl;
+            writing-mode: vertical-rl;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .pdf-header {
+            margin-left: 25px;
+            border-left: 1px solid #2e6b47;
+            padding-left: 12px;
+            height: 100%;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .pdf-title {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #1e472f;
+            margin: 0 0 0 8pt;
+            letter-spacing: 3px;
+        }
+        .pdf-author {
+            font-size: 11pt;
+            color: #333;
+            margin-top: 50px;
+            letter-spacing: 2px;
+        }
+
+        .pdf-footer {
+            display: inline-block;
+            vertical-align: bottom;
+            margin-right: 20px;
+            height: 100%;
+        }
+        .pdf-source {
+            font-size: 8.5pt;
+            color: #666;
+            letter-spacing: 1px;
+        }
+
+        .tanka-container {
+            height: 100%;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .tanka-block {
+            display: inline-block;
+            vertical-align: top;
+            font-size: 12.5pt;
+            line-height: 2.1;
+            letter-spacing: 2px;
+            margin-left: 45px;
+            height: 100%;
+        }
+
+        .kotogoto {
+            font-size: 9.5pt;
+            color: #555;
+            margin-left: 6px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        ruby { ruby-align: center; }
+        rt { font-size: 0.5em; color: #444; letter-spacing: 0; }
+        </style>
+        ${printScript}
+        </head>
+        <body>
+        ${pagesHTML}
+        </body>
+        </html>`;
+        }
+
+        function openInNewWindow(autoPrint = false) {
+            const htmlString = generatePdfHTML(autoPrint);
+            const win = window.open('', '_blank');
+            if (!win) {
+                alert('ポップアップがブロックされました。ブラウザの設定をご確認ください。');
+                return;
+            }
+            win.document.open();
+            win.document.write(htmlString);
+            win.document.close();
+        }
+
+        downloadPdfBtn.addEventListener('click', () => openInNewWindow(true));
+        viewWindowBtn.addEventListener('click', () => openInNewWindow(false));
+
+        window.addEventListener('beforeunload', (e) => {
+            if (tankaDataList.length > 0 || workTitleInput.value || authorNameInput.value) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+
+</html>
