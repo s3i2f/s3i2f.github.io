@@ -520,6 +520,62 @@ a:hover {
 }
 
 /* ==========================================================================
+   Article Images & Cover
+   ========================================================================== */
+
+/* --- 1. 記事上部の控えめなカバー画像 --- */
+.entry-cover {
+    width: 100%;
+    max-height: 240px;
+    /* 一般的なヒーロー画像より高さを抑えて主張を控えめに */
+    margin-bottom: 2rem;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.entry-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 領域に合わせて中央をトリミング表示 */
+    object-position: center;
+    display: block;
+}
+
+/* --- 2. 記事本文内の画像（note風：左右余白＋自動伸縮） --- */
+.entry-image {
+    width: 100%;
+    max-width: 620px;
+    /* 本文幅(760px)より一回り小さく設定して左右余白を確保 */
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-left: auto;
+    /* 中央寄せ配置 */
+    margin-right: auto;
+    text-align: center;
+}
+
+.entry-image img {
+    max-width: 100%;
+    /* 親領域を超えないよう自動縮小 */
+    height: auto;
+    /* アスペクト比を維持 */
+    display: block;
+    margin: 0 auto;
+    /* 画像自体の領域中央寄せ */
+    border-radius: 4px;
+}
+
+/* 画像キャプション（note風の控えめな注記スタイル） */
+.entry-image figcaption {
+    margin-top: 0.6rem;
+    color: #888888;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* ==========================================================================
    About / History
    ========================================================================== */
 .about-list,
@@ -580,7 +636,26 @@ a:hover {
 /* ==========================================================================
    Responsive Styles (Tablet / Desktop: min-width 768px)
    ========================================================================== */
-@media (min-width: 768px) {
+
+@media (max-width: 767px) {
+
+    /* .entry-cover/.entry-image */
+    /* モバイル環境ではカバー画像の高さをさらに低く設定 */
+    .entry-cover {
+        max-height: 160px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* スマホ画面での余白感調整：幅90%で左右に適度なマージンを保持 */
+    .entry-image {
+        width: 90%;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .entry-image figcaption {
+        font-size: 0.8rem;
+    }
 
     /* Intro */
     .intro {
