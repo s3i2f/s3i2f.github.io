@@ -427,47 +427,88 @@ a:hover {
 #pagination-container {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    gap: 12px;
     margin-top: 3rem;
     padding-top: 1.5rem;
     border-top: 1px dashed #ccc;
-    /* Recent Newsの区切り線デザインを踏襲 */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #pagination-container a {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    /* 矢印とテキストブロックを上下中央で揃える */
     flex: 1;
-    /* 左右均等に割り当て */
-    padding: 12px 16px;
+    /* 左右で幅を50%ずつ均等に分ける */
+    width: calc(50% - 6px);
+    padding: 10px;
     color: var(--text-color);
-    /* 通常時はテキストカラーになじませる */
+    text-decoration: none;
     border-radius: 4px;
-    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    transition: background-color var(--transition-speed) ease;
+    overflow: hidden;
 }
 
+/* ホバー時の設定 */
 #pagination-container a:hover {
     background-color: var(--hover-bg);
-    /* 変数の薄い青色を参照 */
-    color: var(--active-color);
-    /* テキストもアクセントカラーに変更 */
-    text-decoration: none;
-    /* デフォルトのアンダーラインを打ち消し */
 }
 
-#pagination-container .page-prev {
+#pagination-container a:hover .nav-title {
+    color: var(--active-color);
+}
+
+/* --- 内部要素のスタイル --- */
+.nav-arrow {
+    font-size: 1.4rem;
+    color: #999;
+    flex-shrink: 0;
+    padding: 0 8px;
+    font-family: inherit;
+}
+
+.nav-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* ラベル（前へ / 次へ）: 薄く小さく */
+.nav-label {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 2px;
+    line-height: 1;
+}
+
+/* 記事タイトル */
+.nav-title {
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', ;
+    font-size: 0.95rem;
+    color: var(--title-color);
+    line-height: 1.4;
+    /* 2行まで表示し、超える場合は「...」で省略 */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+/* 左右それぞれのテキスト寄せ設定 */
+.page-prev .nav-content {
     text-align: left;
 }
 
-#pagination-container .page-next {
+.page-next .nav-content {
     text-align: right;
 }
 
+/* 空要素（片方のボタンがない場合のレイアウト維持） */
 #pagination-container .empty {
     flex: 1;
-    /* ボタンが片方しかない場合のレイアウト維持 */
 }
 
 /* ==========================================================================
@@ -714,17 +755,25 @@ a:hover {
 
     /* Pagination (Mobile) */
     #pagination-container {
-        flex-direction: column;
-        gap: 10px;
+        gap: 6px;
+        padding-top: 1.2rem;
     }
 
     #pagination-container a {
-        width: 100%;
+        padding: 8px 4px;
     }
 
-    #pagination-container .page-next {
-        text-align: left;
-        /* スマホでは縦並びになるため左揃えに統一 */
+    .nav-arrow {
+        font-size: 1.2rem;
+        padding: 0 4px;
+    }
+
+    .nav-label {
+        font-size: 0.65rem;
+    }
+
+    .nav-title {
+        font-size: 0.85rem;
     }
 
     /* Footer */

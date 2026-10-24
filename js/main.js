@@ -33,16 +33,30 @@ document.addEventListener("DOMContentLoaded", () => {
         // 7. HTMLを生成して挿入
         let html = '';
 
-        // 前の記事（古い記事）へのリンク
+        // 前の記事（古い記事）へのリンク：[ ＜ ] [ 前へ / タイトル ]
         if (olderArticle) {
-            html += `<a href="${olderArticle.url}" class="page-prev">&larr; 前へ: ${olderArticle.title}</a>`;
+            html += `
+            <a href="${olderArticle.url}" class="page-prev">
+                <span class="nav-arrow">&lt;</span>
+                <span class="nav-content">
+                    <span class="nav-label">前へ</span>
+                    <span class="nav-title">${olderArticle.title}</span>
+                </span>
+            </a>`;
         } else {
             html += `<span class="page-prev empty"></span>`;
         }
 
-        // 次の記事（新しい記事）へのリンク
+        // 次の記事（新しい記事）へのリンク：[ 次へ / タイトル ] [ ＞ ]
         if (newerArticle) {
-            html += `<a href="${newerArticle.url}" class="page-next">次へ: ${newerArticle.title} &rarr;</a>`;
+            html += `
+            <a href="${newerArticle.url}" class="page-next">
+                <span class="nav-content">
+                    <span class="nav-label">次へ</span>
+                    <span class="nav-title">${newerArticle.title}</span>
+                </span>
+                <span class="nav-arrow">&gt;</span>
+            </a>`;
         } else {
             html += `<span class="page-next empty"></span>`;
         }
