@@ -77,7 +77,7 @@ const siteData = {
         },
         {
             date: "2026-10-02",
-            title: "沈黙",
+            title: "沈黙（16首）",
             url: "/work/tanka/261002_chimmoku.html",
             category: "短歌",
             tags: ["短歌作品"]
