@@ -130,10 +130,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
         const dateContainer = document.getElementById("article-date");
 
-        // 【要件2】要素が存在しないページでは安全に終了
+        // 要素が存在しないページでは安全に終了
         if (!dateContainer) return;
 
-        // 【要件4】データの存在チェック
+        // データの存在チェック
         if (typeof siteData === "undefined" || !siteData.articles) {
             console.warn("siteData is undefined or missing articles array.");
             return;
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
             dateContainer.textContent = currentArticle.date;
         }
     } catch (error) {
-        // 【要件3】エラーハンドリング（他のスクリプトを止めない）
+        // エラーハンドリング（他のスクリプトを止めない）
         console.error("Error displaying article date:", error);
     }
 });
@@ -167,10 +167,10 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
         const listContainer = document.getElementById("category-article-list");
 
-        // 【要件2】要素が存在しないページでは安全に終了
+        // 要素が存在しないページでは安全に終了
         if (!listContainer) return;
 
-        // 【要件4】データの存在チェック
+        // データの存在チェック
         if (typeof siteData === "undefined" || !siteData.articles) {
             console.warn("siteData is undefined or missing articles array.");
             return;
@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // リンク先はサイトルート相対パスとする
             a.href = article.url.startsWith('/') ? article.url : '/' + article.url;
 
-            // 日付とタイトル（後でCSSを当てやすいようspanで囲んでいます）
+            // 日付とタイトル
             a.innerHTML = `<span class="article-list-date">${article.date}</span> <span class="article-list-title">${article.title}</span>`;
             li.appendChild(a);
             fragment.appendChild(li);
@@ -244,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
         listContainer.appendChild(fragment);
 
     } catch (error) {
-        // 【要件3】エラーハンドリング（他のスクリプトを止めない）
+        // エラーハンドリング（他のスクリプトを止めない）
         console.error("Error generating category article list:", error);
     }
 });
