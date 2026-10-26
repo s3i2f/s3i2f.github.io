@@ -11,7 +11,7 @@
 
 /* サイトタイトルの調整 */
 .site-header.is-compact .site-title {
-    margin-bottom: 0;
+    padding-bottom: 0;
     border-bottom: none;
     font-size: 15px;
     flex-shrink: 0;

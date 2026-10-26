@@ -76,21 +76,21 @@ const siteData = {
             tags: ["雑記"]
         },
         {
-            date: "2026-10-2",
+            date: "2026-10-02",
             title: "沈黙",
             url: "/work/tanka/261002_chimmoku.html",
             category: "短歌",
             tags: ["短歌作品"]
         },
         {
-            date: "2026-10-2",
+            date: "2026-10-02",
             title: "このサイトについて",
             url: "/essay/note/261002_publish.html",
             category: "雑記",
             tags: ["雑記"]
         },
         {
-            date: "2026-10-2",
+            date: "2026-10-02",
             title: "プロフィール",
             url: "about.html",
             category: "about",

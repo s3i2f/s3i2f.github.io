@@ -122,3 +122,129 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("パンくずリストの生成中にエラーが発生しました:", error);
     }
 });
+
+// ==========================================
+// 　【日付を表示】
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    try {
+        const dateContainer = document.getElementById("article-date");
+
+        // 【要件2】要素が存在しないページでは安全に終了
+        if (!dateContainer) return;
+
+        // 【要件4】データの存在チェック
+        if (typeof siteData === "undefined" || !siteData.articles) {
+            console.warn("siteData is undefined or missing articles array.");
+            return;
+        }
+
+        const currentPath = window.location.pathname;
+
+        // 現在のページに該当する記事データを検索
+        const currentArticle = siteData.articles.find(article => {
+            if (!article.url) return false;
+            // URLの先頭の '/' を削除して比較し、ルート相対・絶対パスの違いを吸収
+            const normalizedUrl = article.url.replace(/^\//, '');
+            return currentPath.endsWith(normalizedUrl);
+        });
+
+        // 該当記事があり、日付データが存在すれば表示
+        if (currentArticle && currentArticle.date) {
+            dateContainer.textContent = currentArticle.date;
+        }
+    } catch (error) {
+        // 【要件3】エラーハンドリング（他のスクリプトを止めない）
+        console.error("Error displaying article date:", error);
+    }
+});
+
+
+// ==========================================
+// 【カテゴリページの記事一覧】
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    try {
+        const listContainer = document.getElementById("category-article-list");
+
+        // 【要件2】要素が存在しないページでは安全に終了
+        if (!listContainer) return;
+
+        // 【要件4】データの存在チェック
+        if (typeof siteData === "undefined" || !siteData.articles) {
+            console.warn("siteData is undefined or missing articles array.");
+            return;
+        }
+
+        const currentPath = window.location.pathname;
+
+        // 現在のURLからファイル名を取り除き、ディレクトリパスを取得 (例: /essay/note/)
+        const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        const currentParts = currentDir.split('/').filter(Boolean);
+
+        // 現在のカテゴリに属する記事を抽出
+        const categoryArticles = siteData.articles.filter(article => {
+            if (!article.url) return false;
+
+            // URLを正規化（先頭に / を付ける）
+            const aUrl = article.url.startsWith('/') ? article.url : '/' + article.url;
+
+            // インデックスページ自体は一覧から除外
+            if (aUrl.endsWith('index.html')) return false;
+
+            const articleDir = aUrl.substring(0, aUrl.lastIndexOf('/') + 1);
+            const articleParts = articleDir.split('/').filter(Boolean);
+
+            if (articleParts.length === 0) return false;
+
+            // ローカル環境やサブディレクトリ運用を考慮した階層判定
+            // 現在のディレクトリパスと、記事のディレクトリパスを比較して属しているか判定します
+            let isCategoryMatch = false;
+            for (let i = 0; i < currentParts.length; i++) {
+                const pathSub = currentParts.slice(i);
+
+                let isPrefix = true;
+                for (let j = 0; j < pathSub.length; j++) {
+                    if (pathSub[j] !== articleParts[j]) {
+                        isPrefix = false;
+                        break;
+                    }
+                }
+
+                if (isPrefix) {
+                    isCategoryMatch = true;
+                    break;
+                }
+            }
+
+            return isCategoryMatch;
+        });
+
+        // 記事がない場合
+        if (categoryArticles.length === 0) {
+            listContainer.innerHTML = "<li>このカテゴリにはまだ記事がありません。</li>";
+            return;
+        }
+
+        // リスト要素を生成して追加
+        const fragment = document.createDocumentFragment();
+        categoryArticles.forEach(article => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+
+            // リンク先はサイトルート相対パスとする
+            a.href = article.url.startsWith('/') ? article.url : '/' + article.url;
+
+            // 日付とタイトル（後でCSSを当てやすいようspanで囲んでいます）
+            a.innerHTML = `<span class="article-list-date">${article.date}</span> <span class="article-list-title">${article.title}</span>`;
+            li.appendChild(a);
+            fragment.appendChild(li);
+        });
+
+        listContainer.appendChild(fragment);
+
+    } catch (error) {
+        // 【要件3】エラーハンドリング（他のスクリプトを止めない）
+        console.error("Error generating category article list:", error);
+    }
+});
