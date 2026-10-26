@@ -49,11 +49,12 @@ h3 {
     font-family: "Zen Old Mincho", "Times New Roman", serif;
 }
 
-h2 {
+h1 {
     font-size: 25px;
 }
 
-h3 {
+h2 {
+    font-size: 20px;
     margin-top: 30px;
     margin-bottom: 15px;
 }
@@ -71,8 +72,11 @@ a:hover {
    Site Title
    ========================================================================== */
 .site-title {
-    font-size: 12px;
-    margin-bottom: 1rem;
+    font-size: 25px;
+    font-family: "Zen Old Mincho",
+        "Times New Roman",
+        serif;
+    /* padding-bottom: 1rem; */
     border-bottom: 2px solid #444;
     overflow: hidden;
 }
@@ -323,7 +327,7 @@ a:hover {
     padding-inline-start: 1.5rem;
 }
 
-.profile-txt h2 {
+.profile-txt h1 {
     font-size: 18px;
 }
 
