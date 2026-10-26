@@ -27,7 +27,7 @@ const siteData = {
         // },
         {
             date: "2026-10-31",
-            title: "城跡にて",
+            title: "城跡にて（7首）",
             url: "/work/tanka/261031_shiroatonite.html",
             category: "tanka",
             tags: ["短歌作品"]
