@@ -27,6 +27,13 @@ const siteData = {
         // },
         {
             date: "2026-10-31",
+            title: "つぶやかなかったこと",
+            url: "/essay/note/261031_untweeted26Oct.html",
+            category: "雑記",
+            tags: ["雑記", "untweeted"]
+        },
+        {
+            date: "2026-10-31",
             title: "城跡にて（7首）",
             url: "/work/tanka/261031_shiroatonite.html",
             category: "短歌",
@@ -83,7 +90,7 @@ const siteData = {
         },
         {
             date: "2026-10-02",
-            title: "このサイトについて",
+            title: "サイトを公開しました",
             url: "/essay/note/261002_publish.html",
             category: "雑記",
             tags: ["雑記"]
