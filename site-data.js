@@ -83,7 +83,7 @@ const siteData = {
         },
         {
             date: "2026-10-02",
-            title: "短歌一年生",
+            title: "短歌生活一年",
             url: "/essay/note/261002_1year.html",
             category: "雑記",
             tags: ["雑記"]
