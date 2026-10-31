@@ -161,90 +161,139 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // ==========================================
-// 【カテゴリページの記事一覧】
+// 【カテゴリページの記事一覧 ＆ 親カテゴリピックアップ】
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     try {
-        const listContainer = document.getElementById("category-article-list");
-
-        // 要素が存在しないページでは安全に終了
-        if (!listContainer) return;
-
         // データの存在チェック
         if (typeof siteData === "undefined" || !siteData.articles) {
             console.warn("siteData is undefined or missing articles array.");
             return;
         }
 
-        const currentPath = window.location.pathname;
+        const listContainer = document.getElementById("category-article-list"); // 子カテゴリ用
+        const pickupContainer = document.getElementById("parent-category-pickup"); // 親カテゴリ用
 
-        // 現在のURLからファイル名を取り除き、ディレクトリパスを取得 (例: /essay/note/)
+        const currentPath = window.location.pathname;
         const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
         const currentParts = currentDir.split('/').filter(Boolean);
 
-        // 現在のカテゴリに属する記事を抽出
-        const categoryArticles = siteData.articles.filter(article => {
-            if (!article.url) return false;
+        // --------------------------------------------------
+        // パターンA: 親カテゴリページのピックアップ表示 (案1)
+        // --------------------------------------------------
+        if (pickupContainer) {
+            // 現在のディレクトリ配下の記事を取得（index.htmlは除外）
+            const parentArticles = siteData.articles.filter(article => {
+                if (!article.url || article.url.endsWith('index.html')) return false;
+                const aUrl = article.url.startsWith('/') ? article.url : '/' + article.url;
+                return aUrl.startsWith(currentDir);
+            });
 
-            // URLを正規化（先頭に / を付ける）
-            const aUrl = article.url.startsWith('/') ? article.url : '/' + article.url;
+            // 子カテゴリ（article.category）ごとにグループ化
+            const grouped = {};
+            parentArticles.forEach(article => {
+                const catId = article.category;
+                if (!catId) return;
+                if (!grouped[catId]) grouped[catId] = [];
+                grouped[catId].push(article);
+            });
 
-            // インデックスページ自体は一覧から除外
-            if (aUrl.endsWith('index.html')) return false;
+            const fragment = document.createDocumentFragment();
 
-            const articleDir = aUrl.substring(0, aUrl.lastIndexOf('/') + 1);
-            const articleParts = articleDir.split('/').filter(Boolean);
+            // グループごとにHTMLを生成
+            for (const [catId, articles] of Object.entries(grouped)) {
+                // 最新3件に絞る
+                const topArticles = articles.slice(0, 3);
+                if (topArticles.length === 0) continue;
 
-            if (articleParts.length === 0) return false;
+                // カテゴリ情報の取得（定義がない場合のフォールバックも用意）
+                const catMeta = (siteData.categories && siteData.categories[catId])
+                    ? siteData.categories[catId]
+                    : { name: catId, url: currentDir + catId + '/' };
 
-            // ローカル環境やサブディレクトリ運用を考慮した階層判定
-            // 現在のディレクトリパスと、記事のディレクトリパスを比較して属しているか判定します
-            let isCategoryMatch = false;
-            for (let i = 0; i < currentParts.length; i++) {
-                const pathSub = currentParts.slice(i);
+                // セクションのラッパー作成
+                const section = document.createElement("section");
+                section.className = "category-pickup-section";
 
-                let isPrefix = true;
-                for (let j = 0; j < pathSub.length; j++) {
-                    if (pathSub[j] !== articleParts[j]) {
-                        isPrefix = false;
+                // 見出し
+                const h3 = document.createElement("h3");
+                h3.textContent = catMeta.name;
+                section.appendChild(h3);
+
+                // 記事リスト
+                const ul = document.createElement("ul");
+                topArticles.forEach(article => {
+                    const li = document.createElement("li");
+                    const aUrl = article.url.startsWith('/') ? article.url : '/' + article.url;
+                    li.innerHTML = `<a href="${aUrl}"><span class="article-list-date">${article.date}</span> <span class="article-list-title">${article.title}</span></a>`;
+                    ul.appendChild(li);
+                });
+                section.appendChild(ul);
+
+                // 「もっと見る」リンク
+                const moreLink = document.createElement("div");
+                moreLink.className = "category-pickup-more";
+                moreLink.innerHTML = `<a href="${catMeta.url}">${catMeta.name}の記事をもっと見る &raquo;</a>`;
+                section.appendChild(moreLink);
+
+                fragment.appendChild(section);
+            }
+
+            if (fragment.childNodes.length === 0) {
+                pickupContainer.innerHTML = "<p>記事がありません。</p>";
+            } else {
+                pickupContainer.appendChild(fragment);
+            }
+        }
+
+        // --------------------------------------------------
+        // パターンB: 子カテゴリページの一覧表示（既存のロジック）
+        // --------------------------------------------------
+        if (listContainer) {
+            const categoryArticles = siteData.articles.filter(article => {
+                if (!article.url) return false;
+                const aUrl = article.url.startsWith('/') ? article.url : '/' + article.url;
+                if (aUrl.endsWith('index.html')) return false;
+
+                const articleDir = aUrl.substring(0, aUrl.lastIndexOf('/') + 1);
+                const articleParts = articleDir.split('/').filter(Boolean);
+
+                if (articleParts.length === 0) return false;
+
+                let isCategoryMatch = false;
+                for (let i = 0; i < currentParts.length; i++) {
+                    const pathSub = currentParts.slice(i);
+                    let isPrefix = true;
+                    for (let j = 0; j < pathSub.length; j++) {
+                        if (pathSub[j] !== articleParts[j]) {
+                            isPrefix = false;
+                            break;
+                        }
+                    }
+                    if (isPrefix) {
+                        isCategoryMatch = true;
                         break;
                     }
                 }
+                return isCategoryMatch;
+            });
 
-                if (isPrefix) {
-                    isCategoryMatch = true;
-                    break;
-                }
+            if (categoryArticles.length === 0) {
+                listContainer.innerHTML = "<li>このカテゴリにはまだ記事がありません。</li>";
+                return;
             }
 
-            return isCategoryMatch;
-        });
-
-        // 記事がない場合
-        if (categoryArticles.length === 0) {
-            listContainer.innerHTML = "<li>このカテゴリにはまだ記事がありません。</li>";
-            return;
+            const fragment = document.createDocumentFragment();
+            categoryArticles.forEach(article => {
+                const li = document.createElement("li");
+                const aUrl = article.url.startsWith('/') ? article.url : '/' + article.url;
+                li.innerHTML = `<a href="${aUrl}"><span class="article-list-date">${article.date}</span> <span class="article-list-title">${article.title}</span></a>`;
+                fragment.appendChild(li);
+            });
+            listContainer.appendChild(fragment);
         }
 
-        // リスト要素を生成して追加
-        const fragment = document.createDocumentFragment();
-        categoryArticles.forEach(article => {
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-
-            // リンク先はサイトルート相対パスとする
-            a.href = article.url.startsWith('/') ? article.url : '/' + article.url;
-
-            // 日付とタイトル
-            a.innerHTML = `<span class="article-list-date">${article.date}</span> <span class="article-list-title">${article.title}</span>`;
-            li.appendChild(a);
-            fragment.appendChild(li);
-        });
-
-        listContainer.appendChild(fragment);
-
     } catch (error) {
-        // エラーハンドリング（他のスクリプトを止めない）
         console.error("Error generating category article list:", error);
     }
 });
