@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentParts = currentDir.split('/').filter(Boolean);
 
         // --------------------------------------------------
-        // パターンA: 親カテゴリページのピックアップ表示 (案1)
+        // パターンA: 親カテゴリページのピックアップ表示
         // --------------------------------------------------
         if (pickupContainer) {
             // 現在のディレクトリ配下の記事を取得（index.htmlは除外）
@@ -216,9 +216,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 section.className = "category-pickup-section";
 
                 // 見出し
-                const h3 = document.createElement("h3");
-                h3.textContent = catMeta.name;
-                section.appendChild(h3);
+                const h2 = document.createElement("h2");
+                h2.innerHTML = `<a href="${catMeta.url}">${catMeta.name}</a>`;
+                section.appendChild(h2);
+
+                // カテゴリの説明文 (descriptionがあればpタグで追加)
+                if (catMeta.description) {
+                    const desc = document.createElement("p");
+                    desc.className = "category-pickup-desc";
+                    desc.textContent = catMeta.description;
+                    section.appendChild(desc);
+                }
 
                 // 記事リスト
                 const ul = document.createElement("ul");
@@ -233,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // 「もっと見る」リンク
                 const moreLink = document.createElement("div");
                 moreLink.className = "category-pickup-more";
-                moreLink.innerHTML = `<a href="${catMeta.url}">${catMeta.name}の記事をもっと見る &raquo;</a>`;
+                moreLink.innerHTML = `<a href="${catMeta.url}">もっと見る &raquo;</a>`;
                 section.appendChild(moreLink);
 
                 fragment.appendChild(section);

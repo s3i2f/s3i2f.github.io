@@ -411,6 +411,46 @@ a:hover {
     white-space: nowrap;
 }
 
+/* ==========================================
+   Category pickup
+   ========================================== */
+.category-pickup-section {
+    margin-bottom: 3rem;
+    /* セクション間の余白 */
+}
+
+.category-pickup-section h2 a:hover {
+    text-decoration: underline;
+    /* ホバー時にリンクであることを分かりやすく */
+}
+
+/* カテゴリ説明文のスタイル */
+.category-pickup-desc {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9em;
+    color: #555;
+    /* 記事リストより少し控えめな色に */
+    line-height: 1.6;
+}
+
+/* 「もっと見る」を右寄せ */
+.category-pickup-more {
+    text-align: right;
+    margin-top: 1rem;
+}
+
+.category-pickup-more a {
+    font-size: 0.9em;
+    color: #333;
+    text-decoration: none;
+    /* 必要に応じて矢印などの装飾を追加 */
+}
+
+.category-pickup-more a:hover {
+    text-decoration: underline;
+}
+
 /* ==========================================================================
    Breadcrumb
    ========================================================================== */
@@ -756,6 +796,33 @@ a:hover {
     .entry-image figcaption {
         font-size: 0.8rem;
     }
+
+/**category pickup**/
+        /* セクション間の余白をPC版（3rem）より少し狭くする */
+        .category-pickup-section {
+            margin-bottom: 2rem;
+        }
+    
+        /* カテゴリ説明文の文字サイズや余白を微調整 */
+        .category-pickup-desc {
+            font-size: 0.85em;
+            margin-bottom: 1rem;
+        }
+    
+        /* 記事リスト間の余白を広げて、誤タップを防ぐ */
+        .category-pickup-section li {
+            margin-bottom: 1rem;
+        }
+    
+        /* 「もっと見る」のタップ領域（ヒットボックス）を広げる */
+        .category-pickup-more a {
+            display: inline-block;
+            /* paddingを上下に効かせるために必須 */
+            padding: 12px 0 12px 20px;
+            /* 上下12px、左20pxの余白を追加 */
+            margin-right: -5px;
+            /* 右端が詰まりすぎないよう、見た目の位置を微調整 */
+        }
 
     /* Intro */
     .intro {

@@ -1,11 +1,35 @@
 const siteData = {
     categories: {
-        "about": { name: "about", url: "/about/" },
-        "雑記": { name: "雑記", url: "/essay/note/" },
-        "散歩日記": { name: "散歩日記", url: "/essay/sampo/" },
-       "短歌作品": { name: "短歌作品", url: "/work/tanka/" },
-        "一首評": { name: "一首評", url: "/review/isshu/" },
-        "評・感想": { name: "評・感想", url: "/review/comment/" },
+        "about": { 
+            name: "about",
+             url: "/about/",
+            description: "" 
+        },
+        "雑記": {
+             name: "雑記", 
+             url: "/essay/note/",
+            description:"日記や雑文。"
+            },
+        "散歩日記": {
+             name: "散歩日記", 
+             url: "/essay/sampo/" ,
+            description:"散歩の記録。"
+            },
+       "短歌": { 
+        name: "短歌作品",
+         url: "/work/tanka/",
+           description:"短歌作品（新作・既発表作）。"
+        },
+        "一首評": { 
+            name: "一首評", 
+            url: "/review/isshu/",
+            description: "※準備中"
+     },
+        "評・感想": {
+             name: "評・感想",
+              url: "/review/comment/",
+            description:"※準備中"
+            },
     },
 
     // お知らせ・固定表示データ
