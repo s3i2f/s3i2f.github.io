@@ -311,8 +311,9 @@ a:hover {
 .profile {
     display: flex;
     flex-direction: row;
-    flex-shrink: 0;
-    width: auto;
+    align-items: flex-start;
+    gap: 1.5rem;
+    width: 100%;
 }
 
 .profile-img {
@@ -320,20 +321,34 @@ a:hover {
     align-items: center;
     justify-content: center;
     width: 200px;
-    max-width: 100%;
+    max-width: 30%;
+    flex-shrink: 1;
     aspect-ratio: 1;
-    margin-bottom: 0.6rem;
     background: #f1f1f1;
     border: 1px solid #f1f1f1;
     color: #999;
 }
 
+.profile-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .profile-txt {
-    padding-inline-start: 1.5rem;
+    flex: 1;
+    min-width: 0;
 }
 
 .profile-txt h1 {
-    font-size: 18px;
+   font-size: 18px;
+   margin: 0;
+}
+
+.profile-txt p {
+    overflow-wrap: break-word;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
 }
 
 /* ==========================================================================
@@ -825,9 +840,7 @@ a:hover {
         }
 
     /* Intro */
-    .intro {
-        flex-direction: row;
-    }
+
 
     /* Pagination (Mobile) */
     #pagination-container {

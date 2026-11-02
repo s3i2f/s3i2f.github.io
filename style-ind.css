@@ -80,15 +80,6 @@ article h1 {
     content: "— ";
 }
 
-@media (max-width: 767px) {
-    .quote-box {
-            width: 90%;
-            padding: 1.2em 1.5em;
-            /* margin: 1.5em 1.5em; */
-            box-sizing: border-box;
-        }
-}
-
 
 /* ==========================================
   #article-date
@@ -102,3 +93,36 @@ article h1 {
     gap: 0.5rem;
 }
 
+
+
+
+@media (max-width: 767px) {
+.site-header.is-compact {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 0;
+    }
+
+        .site-header.is-compact .top-nav {
+            width: 100%;
+        }
+
+    .site-header.is-compact .nav-list {
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    .site-header.is-compact .nav-link {
+        padding: 6px 8px;
+    }
+
+    .quote-box {
+        width: 90%;
+        padding: 1.2em 1.5em;
+        /* margin: 1.5em 1.5em; */
+        box-sizing: border-box;
+    }
+}

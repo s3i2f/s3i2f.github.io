@@ -67,7 +67,7 @@ const siteData = {
         },
         {
             date: "2026-10-31",
-            title: "つぶやかなかったこと",
+            title: "つぶやかなかったこと（26-10）",
             url: "/essay/note/261031_untweeted26Oct.html",
             category: "雑記",
             tags: ["雑記", "untweeted"]
