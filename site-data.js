@@ -58,13 +58,13 @@ const siteData = {
         //     category: "note",
         //     tags: ["短歌作品"]
         // },
-        // {
-        //     date: "2026-11-**",
-        //     title: "10月の記録",
-        //     url: "/essay/note/2611**_record26Oct.html",
-        //     category: "雑記",
-        //     tags: ["雑記", "record"]
-        // },
+        {
+            date: "2026-11-02",
+            title: "10月の記録",
+            url: "/essay/note/261102_record26Oct.html",
+            category: "雑記",
+            tags: ["雑記", "record"]
+        },
         {
             date: "2026-10-31",
             title: "つぶやかなかったこと",

@@ -42,6 +42,54 @@ article h1 {
     margin-bottom: 0;
 }
 
+/* ==========================================================================
+   quote box
+   ========================================================================== */
+.quote-box {
+    width: 90%;
+    margin: 2em auto;
+
+    background-color: #f8f9fa;
+
+    padding: 1.5em 2em;
+    border-radius: 8px;
+
+    /* テキストのスタイル */
+    color: #444;
+    font-size: 0.95em;
+    line-height: 1.8;
+}
+
+.quote-box p {
+    margin: 0 0 1em 0;
+}
+
+.quote-box p:last-child {
+    margin-bottom: 0;
+}
+
+.quote-box cite {
+    display: block;
+    text-align: right;
+    font-size: 0.85em;
+    color: #888;
+    font-style: normal;
+}
+
+.quote-box cite::before {
+    content: "— ";
+}
+
+@media (max-width: 767px) {
+    .quote-box {
+            width: 90%;
+            padding: 1.2em 1.5em;
+            /* margin: 1.5em 1.5em; */
+            box-sizing: border-box;
+        }
+}
+
+
 /* ==========================================
   #article-date
 ========================================== */
