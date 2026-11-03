@@ -1,6 +1,12 @@
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700&display=swap');
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 /* ==========================================================================
    Variables & Root
    ========================================================================== */
@@ -20,7 +26,11 @@
    Base & Base Typography
    ========================================================================== */
 body {
+    width: 100%;
     max-width: 760px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
     min-height: max-content;
     margin: 0 auto;
     padding: 2rem 1.5rem 4rem;
@@ -697,35 +707,30 @@ a:hover {
     display: block;
 }
 
-/* --- 2. 記事本文内の画像（note風：左右余白＋自動伸縮） --- */
+/* --- 2. 記事本文内の画像 --- */
 .entry-image {
     width: 100%;
     max-width: 620px;
-    /* 本文幅(760px)より一回り小さく設定して左右余白を確保 */
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    margin-left: auto;
-    /* 中央寄せ配置 */
-    margin-right: auto;
+    margin: 2rem auto;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .entry-image img {
-    max-width: 100%;
-    /* 親領域を超えないよう自動縮小 */
+    width: 90%;
+    max-width: 90%;
     height: auto;
-    /* アスペクト比を維持 */
     display: block;
     margin: 0 auto;
-    /* 画像自体の領域中央寄せ */
     border-radius: 4px;
 }
 
-/* 画像キャプション（note風の控えめな注記スタイル） */
+/* 画像キャプション */
 .entry-image figcaption {
     margin-top: 0.6rem;
     color: #888888;
-    font-size: 0.85rem;
+    font-size: 0.85em;
+    /* rem指定を避け、親要素（本文）基準の相対指定 em に変更 */
     line-height: 1.5;
     text-align: center;
 }
