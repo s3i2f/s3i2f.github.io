@@ -82,6 +82,7 @@ a:hover {
     text-decoration: underline;
 }
 
+
 /* ==========================================================================
    Site Title
    ========================================================================== */
@@ -692,7 +693,6 @@ a:hover {
 .entry-cover {
     width: 100%;
     max-height: 240px;
-    /* 一般的なヒーロー画像より高さを抑えて主張を控えめに */
     margin-bottom: 2rem;
     overflow: hidden;
     border-radius: 4px;
@@ -702,23 +702,24 @@ a:hover {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* 領域に合わせて中央をトリミング表示 */
-    object-position: center;
+    object-position: var(--img-pos, center);
     display: block;
 }
 
 /* --- 2. 記事本文内の画像 --- */
-.entry-image {
+.entry-image figure {
     width: 100%;
     max-width: 620px;
     margin: 2rem auto;
     text-align: center;
     box-sizing: border-box;
+    margin: 10px;
 }
 
-.entry-image img {
-    width: 90%;
-    max-width: 90%;
+figure img {
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -726,11 +727,9 @@ a:hover {
 }
 
 /* 画像キャプション */
-.entry-image figcaption {
-    margin-top: 0.6rem;
+figcaption {
     color: #888888;
     font-size: 0.85em;
-    /* rem指定を避け、親要素（本文）基準の相対指定 em に変更 */
     line-height: 1.5;
     text-align: center;
 }
