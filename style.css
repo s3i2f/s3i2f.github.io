@@ -1,0 +1,906 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700&display=swap');
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Variables & Root
+   ========================================================================== */
+:root {
+    --nav-bg: #f1f1f1;
+    --text-color: #555555;
+    --title-color: #0f3566;
+    --link-color: #669be1;
+    --active-color: #3b82f6;
+    --accent-color: #3b82f6;
+    --hover-bg: rgba(59, 130, 246, 0.08);
+    --bg-main: #f1f1f1;
+    --transition-speed: 0.3s;
+}
+
+/* ==========================================================================
+   Base & Base Typography
+   ========================================================================== */
+body {
+    width: 100%;
+    max-width: 760px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    min-height: max-content;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    background-color: var(--bg-main);
+    color: #333;
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+header {
+    padding: 10px;
+    background-color: var(--bg-main);
+    color: var(--title-color);
+}
+
+main {
+    padding: 10px;
+    background-color: var(--bg-main);
+    border-radius: 5px;
+}
+
+h1,
+h2,
+h3 {
+    font-family: "Zen Old Mincho", "Times New Roman", serif;
+}
+
+h1 {
+    font-size: 25px;
+}
+
+h2 {
+    font-size: 20px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+h3{
+    font-size: 12px;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================================================
+   Site Title
+   ========================================================================== */
+.site-title {
+    font-size: 25px;
+    font-family: "Zen Old Mincho",
+        "Times New Roman",
+        serif;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #444;
+    overflow: hidden;
+}
+
+.site-title a {
+    text-decoration: none;
+}
+
+/* ==========================================================================
+   Top Navigation
+   ========================================================================== */
+.top-nav {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    background-color: var(--nav-bg);
+    font-family: 'Times New Roman', Times, serif;
+    overflow-x: auto;
+}
+
+.nav-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: clamp(4px, 1.5vw, 12px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nav-item {
+    position: relative;
+    flex: 1 1 auto;
+    text-align: center;
+}
+
+.nav-link {
+    position: relative;
+    z-index: 1;
+    display: block;
+    padding: 12px clamp(4px, 1vw, 24px);
+    color: var(--text-color);
+    font-size: clamp(0.75rem, 2.5vw, 1rem);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: color var(--transition-speed) ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--active-color);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--active-color);
+}
+
+.nav-link:hover::before,
+.nav-link.active::before {
+    height: 100%;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    transform: scaleX(1);
+}
+
+/* ==========================================================================
+   Sidebar & Mobile Menu Trigger
+   ========================================================================== */
+.nav-toggle {
+    display: none;
+}
+
+.nav-toggle-label {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+
+.nav-toggle-label span {
+    position: relative;
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.nav-toggle-label span::before,
+.nav-toggle-label span::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.nav-toggle-label span::before {
+    top: -6px;
+}
+
+.nav-toggle-label span::after {
+    bottom: -6px;
+}
+
+/* ハンバーガーアイコンのアニメーション */
+.nav-toggle:checked~.nav-toggle-label span {
+    background: transparent;
+}
+
+.nav-toggle:checked~.nav-toggle-label span::before {
+    top: 0;
+    transform: rotate(45deg);
+}
+
+.nav-toggle:checked~.nav-toggle-label span::after {
+    bottom: 0;
+    transform: rotate(-45deg);
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    z-index: 999;
+    width: 350px;
+    max-width: 80vw;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+    transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.nav-toggle:checked~.sidebar {
+    right: 0;
+}
+
+.sidebar-content {
+    padding: 80px 30px;
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: var(--text-color);
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.3rem;
+}
+
+.sidebar ul {
+    padding: 0;
+    list-style: none;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.sidebar li {
+    margin-bottom: 16px;
+}
+
+.sidebar a {
+    position: relative;
+    font-size: 1rem;
+}
+
+.sidebar a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent-color);
+    transition: width 0.3s ease;
+}
+
+.sidebar a:hover {
+    color: var(--accent-color);
+}
+
+.sidebar a:hover::after {
+    width: 100%;
+}
+
+/* ==========================================================================
+   Home / Profile
+   ========================================================================== */
+.intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f1f1f1;
+    align-items: stretch;
+}
+
+.profile {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.profile-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    max-width: 30%;
+    flex-shrink: 1;
+    aspect-ratio: 1;
+    background: #f1f1f1;
+    border: 1px solid #f1f1f1;
+    color: #999;
+}
+
+.profile-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-txt {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-txt h1 {
+   font-size: 18px;
+   margin: 0;
+}
+
+.profile-txt p {
+    overflow-wrap: break-word;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+}
+
+/* ==========================================================================
+   Home / Recent News & Updates
+   ========================================================================== */
+#recent-updates ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+#recent-updates li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8em;
+    padding-bottom: 0.5em;
+    border-bottom: 1px dashed #ccc;
+}
+
+.date {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 75px;
+    margin-right: 10px;
+    color: #666;
+    font-size: 0.9em;
+    font-variant-numeric: tabular-nums;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    width: 70px;
+    margin-right: 8px;
+    color: #333;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.badge::before {
+    content: "[";
+}
+
+.badge::after {
+    content: "]";
+}
+
+.badge.pin-badge {
+    background-color: transparent;
+    border-radius: 4px;
+}
+
+.badge.pin-badge::before,
+.badge.pin-badge::after {
+    content: "";
+}
+
+.badge-empty {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 65px;
+    margin-right: 12px;
+}
+
+.pin-icon {
+    vertical-align: middle;
+}
+
+.update-link,
+.update-text {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ==========================================
+   Category pickup
+   ========================================== */
+.category-pickup-section {
+    margin-bottom: 3rem;
+    /* セクション間の余白 */
+}
+
+.category-pickup-section h2 a:hover {
+    text-decoration: underline;
+    /* ホバー時にリンクであることを分かりやすく */
+}
+
+/* カテゴリ説明文のスタイル */
+.category-pickup-desc {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9em;
+    color: #555;
+    /* 記事リストより少し控えめな色に */
+    line-height: 1.6;
+}
+
+/* 「もっと見る」を右寄せ */
+.category-pickup-more {
+    text-align: right;
+    margin-top: 1rem;
+}
+
+.category-pickup-more a {
+    font-size: 0.9em;
+    color: #333;
+    text-decoration: none;
+    /* 必要に応じて矢印などの装飾を追加 */
+}
+
+.category-pickup-more a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   Breadcrumb
+   ========================================================================== */
+#breadcrumbs {
+    margin-top: 20px;
+    color: #666;
+    font-size: 12px;
+}
+
+#breadcrumbs a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+#breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+#pagination-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#pagination-container a {
+    display: flex;
+    align-items: center;
+    /* 矢印とテキストブロックを上下中央で揃える */
+    flex: 1;
+    /* 左右で幅を50%ずつ均等に分ける */
+    width: calc(50% - 6px);
+    padding: 10px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color var(--transition-speed) ease;
+    overflow: hidden;
+}
+
+/* ホバー時の設定 */
+#pagination-container a:hover {
+    background-color: var(--hover-bg);
+}
+
+#pagination-container a:hover .nav-title {
+    color: var(--active-color);
+}
+
+/* --- 内部要素のスタイル --- */
+.nav-arrow {
+    font-size: 1.4rem;
+    color: #999;
+    flex-shrink: 0;
+    padding: 0 8px;
+    font-family: inherit;
+}
+
+.nav-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* ラベル（前へ / 次へ）: 薄く小さく */
+.nav-label {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 2px;
+    line-height: 1;
+}
+
+/* 記事タイトル */
+.nav-title {
+    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', ;
+    font-size: 0.95rem;
+    color: var(--title-color);
+    line-height: 1.4;
+    /* 2行まで表示し、超える場合は「...」で省略 */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+/* 左右それぞれのテキスト寄せ設定 */
+.page-prev .nav-content {
+    text-align: left;
+}
+
+.page-next .nav-content {
+    text-align: right;
+}
+
+/* 空要素（片方のボタンがない場合のレイアウト維持） */
+#pagination-container .empty {
+    flex: 1;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.site-footer {
+    margin-top: 40px;
+    padding: 30px 15px 20px;
+    background-color: var(--bg-main);
+    border-top: 1px solid #444;
+    color: #333;
+    font-family: inherit;
+}
+
+.footer-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.footer-nav-blocks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 30px;
+    justify-content: flex-start;
+    margin-bottom: 25px;
+}
+
+.footer-nav-block {
+    min-width: 120px;
+    flex: 1 1 120px;
+}
+
+.footer-nav-block h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #444;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 0.95rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.footer-nav-block ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer-nav-block li {
+    margin-bottom: 6px;
+}
+
+.footer-nav-block a {
+    color: #777;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.footer-nav-block a:hover {
+    color: #111;
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding-top: 15px;
+    border-top: 1px solid #eaeaea;
+}
+
+.footer-sns {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-sns a {
+    display: inline-block;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.footer-sns a:hover {
+    opacity: 0.7;
+    transform: translateY(-2px);
+}
+
+.footer-sns img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.copyright {
+    margin: 0;
+    color: #999;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   Article Images & Cover
+   ========================================================================== */
+
+/* --- 1. 記事上部の控えめなカバー画像 --- */
+.entry-cover {
+    width: 100%;
+    max-height: 240px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.entry-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--img-pos, center);
+    display: block;
+}
+
+/* --- 2. 記事本文内の画像 --- */
+.entry-image figure {
+    width: 100%;
+    max-width: 620px;
+    margin: 2rem auto;
+    text-align: center;
+    box-sizing: border-box;
+    margin: 10px;
+}
+
+figure img {
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 4px;
+}
+
+/* 画像キャプション */
+figcaption {
+    color: #888888;
+    font-size: 0.85em;
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* ==========================================================================
+   About / History
+   ========================================================================== */
+.about-list,
+.personal-history {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.about-list dt {
+    width: 60px;
+}
+
+.personal-history dt {
+    width: 80px;
+}
+
+/* ==========================================================================
+   Review / Isshu
+   ========================================================================== */
+.tanka-desc {
+    margin-bottom: 30px;
+    color: #777;
+}
+
+.isshu-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.isshu {
+    min-width: 130px;
+    margin-right: 10px;
+    writing-mode: vertical-rl;
+}
+
+.tanka {
+    height: 33em;
+    font-family: 'Zen Old Mincho', 'Times New Roman', Times, serif;
+    font-size: 20px;
+}
+
+.source {
+    text-align: end;
+}
+
+.review {
+    flex: 1;
+}
+
+.review p {
+    margin-block-start: 0;
+}
+
+
+/* ==========================================================================
+   Responsive Styles (Tablet / Desktop: min-width 768px)
+   ========================================================================== */
+
+@media (max-width: 767px) {
+
+    /* .entry-cover/.entry-image */
+    /* モバイル環境ではカバー画像の高さをさらに低く設定 */
+    .entry-cover {
+        max-height: 160px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* スマホ画面での余白感調整：幅90%で左右に適度なマージンを保持 */
+    .entry-image {
+        width: 90%;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .entry-image figcaption {
+        font-size: 0.8rem;
+    }
+
+/**category pickup**/
+        /* セクション間の余白をPC版（3rem）より少し狭くする */
+        .category-pickup-section {
+            margin-bottom: 2rem;
+        }
+    
+        /* カテゴリ説明文の文字サイズや余白を微調整 */
+        .category-pickup-desc {
+            font-size: 0.85em;
+            margin-bottom: 1rem;
+        }
+    
+        /* 記事リスト間の余白を広げて、誤タップを防ぐ */
+        .category-pickup-section li {
+            margin-bottom: 1rem;
+        }
+    
+        /* 「もっと見る」のタップ領域（ヒットボックス）を広げる */
+        .category-pickup-more a {
+            display: inline-block;
+            /* paddingを上下に効かせるために必須 */
+            padding: 12px 0 12px 20px;
+            /* 上下12px、左20pxの余白を追加 */
+            margin-right: -5px;
+            /* 右端が詰まりすぎないよう、見た目の位置を微調整 */
+        }
+
+    /* Intro */
+
+
+    /* Pagination (Mobile) */
+    #pagination-container {
+        gap: 6px;
+        padding-top: 1.2rem;
+    }
+
+    #pagination-container a {
+        padding: 8px 4px;
+    }
+
+    .nav-arrow {
+        font-size: 1.2rem;
+        padding: 0 4px;
+    }
+
+    .nav-label {
+        font-size: 0.65rem;
+    }
+
+    .nav-title {
+        font-size: 0.85rem;
+    }
+
+    /* Footer */
+    .site-footer {
+        margin-top: 80px;
+        padding: 20px 20px 20px;
+    }
+
+    .footer-nav-blocks {
+        gap: 40px;
+        justify-content: space-between;
+        margin-bottom: 40px;
+    }
+
+    .footer-nav-block {
+        flex: 0 1 auto;
+    }
+
+    .footer-nav-block h4 {
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+
+    .footer-nav-block li {
+        margin-bottom: 10px;
+    }
+
+    .footer-nav-block a {
+        font-size: 0.9rem;
+    }
+
+    .footer-bottom {
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        padding-top: 25px;
+    }
+}
